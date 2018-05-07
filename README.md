@@ -27,9 +27,10 @@ Quick start Guide
   2. Start up Consul registrator zipkin in docker with docker run command
   	docker run -d -p 9411:9411 openzipkin/zipkin
   	docker run -d --name consul -p ${your_host}:8300:8300   -p ${your_host}:8301:8301   -p ${your_host}:8301:8301/udp -p ${your_host}:8302:8302 -p ${your_host}:8302:8302/udp       -p ${your_host}:8400:8400  -p ${your_host}:8500:8500 -p ${your_host}:53:53/udp  consul
+
 docker run -d -v /var/run/docker.sock:/tmp/docker.sock --name registrator -h registrator  gliderlabs/registrator:latest -ip=${your_host} consul://${your_host}:8500
   	
-  3. [Install and start redis on your local computer]{https://redis.io/topics/quickstart}
+  3. [Install and start redis on your local computer](https://redis.io/topics/quickstart)
   4. Change settings in application.properties for redis,db and zipkin settings.
   5. build network-operator and customer-service using maven command
       mvn clean package docker:build
