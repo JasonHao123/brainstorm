@@ -85,7 +85,7 @@ public class NetworkOperatorRouteConfig {
                 from("file:///opt/config?preMove=inprogress") .convertBodyTo(String.class).log("${body}");
 
                 
-                rest("/retail/api/v3")
+                rest("/api")
                     .post("/{serviceGroup}/{serviceId}")
                     .to("direct:service-call");
 
