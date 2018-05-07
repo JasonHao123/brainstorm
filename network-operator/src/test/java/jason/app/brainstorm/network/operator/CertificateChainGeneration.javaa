@@ -1,0 +1,124 @@
+package jason.app.brainstorm.network.operator;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+
+import java.security.cert.CertificateEncodingException;
+
+import sun.misc.BASE64Encoder;
+import sun.security.provider.X509Factory;
+import sun.security.tools.keytool.CertAndKeyGen;
+import sun.security.x509.BasicConstraintsExtension;
+import sun.security.x509.CertificateExtensions;
+import sun.security.x509.X500Name;
+import sun.security.x509.X509CertImpl;
+import sun.security.x509.X509CertInfo;
+ 
+//Tested in jdk1.8.0_40
+public class CertificateChainGeneration {
+    public static void main(String[] args){
+        try{
+            //Generate ROOT certificate
+            CertAndKeyGen keyGen=new CertAndKeyGen("RSA","SHA1WithRSA",null);
+            keyGen.generate(1024);
+            PrivateKey rootPrivateKey=keyGen.getPrivateKey();
+              
+            X509Certificate rootCertificate = keyGen.getSelfCertificate(new X500Name("CN=ROOT"), (long) 365 * 24 * 60 * 60);
+              
+            //Generate intermediate certificate
+            CertAndKeyGen keyGen1=new CertAndKeyGen("RSA","SHA1WithRSA",null);
+            keyGen1.generate(1024);
+            PrivateKey middlePrivateKey=keyGen1.getPrivateKey();
+              
+            X509Certificate middleCertificate = keyGen1.getSelfCertificate(new X500Name("CN=MIDDLE"), (long) 365 * 24 * 60 * 60);
+              
+            //Generate leaf certificate
+            CertAndKeyGen keyGen2=new CertAndKeyGen("RSA","SHA1WithRSA",null);
+            keyGen2.generate(1024);
+            PrivateKey topPrivateKey=keyGen2.getPrivateKey();
+              
+            X509Certificate topCertificate = keyGen2.getSelfCertificate(new X500Name("CN=TOP,OU=GOOD"), (long) 365 * 24 * 60 * 60);
+              
+            rootCertificate   = createSignedCertificate(rootCertificate,rootCertificate,rootPrivateKey);
+            middleCertificate = createSignedCertificate(middleCertificate,rootCertificate,rootPrivateKey);
+            topCertificate    = createSignedCertificate(topCertificate,middleCertificate,middlePrivateKey);
+              
+            X509Certificate[] chain = new X509Certificate[3];
+            chain[0]=topCertificate;
+            chain[1]=middleCertificate;
+            chain[2]=rootCertificate;   
+             
+            System.out.println(Arrays.toString(chain));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+      
+    private static X509Certificate createSignedCertificate(X509Certificate cetrificate,X509Certificate issuerCertificate,PrivateKey issuerPrivateKey){
+        try{
+            Principal issuer = issuerCertificate.getSubjectDN();
+            String issuerSigAlg = issuerCertificate.getSigAlgName();
+              
+            byte[] inCertBytes = cetrificate.getTBSCertificate();
+            X509CertInfo info = new X509CertInfo(inCertBytes);
+            info.set(X509CertInfo.ISSUER, (X500Name) issuer);
+              
+            //No need to add the BasicContraint for leaf cert
+            if(!cetrificate.getSubjectDN().getName().equals("CN=TOP")){
+                CertificateExtensions exts=new CertificateExtensions();
+                BasicConstraintsExtension bce = new BasicConstraintsExtension(true, -1);
+                exts.set(BasicConstraintsExtension.NAME,new BasicConstraintsExtension(false, bce.getExtensionValue()));
+                info.set(X509CertInfo.EXTENSIONS, exts);
+            }
+              
+            X509CertImpl outCert = new X509CertImpl(info);
+            outCert.sign(issuerPrivateKey, issuerSigAlg);
+            BASE64Encoder encoder = new BASE64Encoder();
+            System.out.println(X509Factory.BEGIN_CERT);
+            encoder.encodeBuffer(outCert.getEncoded(), System.out);
+            System.out.println(X509Factory.END_CERT);
+            
+            System.out.println(generateFingerPrint(outCert));
+            return outCert;
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    
+    public static String generateFingerPrint(X509Certificate cert) throws CertificateEncodingException,NoSuchAlgorithmException {
+    	MessageDigest digest = MessageDigest.getInstance("SHA-1");
+    	byte[] hash = digest.digest(cert.getEncoded());
+
+    	final char delimiter = ':';
+    	// Calculate the number of characters in our fingerprint
+    	      // ('# of bytes' * 2) chars + ('# of bytes' - 1) chars for delimiters
+    	      final int len = hash.length * 2 + hash.length - 1;
+    	      // Typically SHA-1 algorithm produces 20 bytes, i.e. len should be 59
+    	      StringBuilder fingerprint = new StringBuilder(len);
+
+    	      for (int i = 0; i < hash.length; i++) {
+    	         // Step 1: unsigned byte
+    	         hash[i] &= 0xff;
+
+    	         // Steps 2 & 3: byte to hex in two chars
+    	         // Lower cased 'x' at '%02x' enforces lower cased char for hex value!
+    	         fingerprint.append(String.format("%02x", hash[i]));
+
+    	         // Step 4: put delimiter
+    	         if (i < hash.length - 1) {
+    	            fingerprint.append(delimiter);
+    	         }
+    	      }
+
+    	      return fingerprint.toString();
+
+
+    	    }
+
+}
