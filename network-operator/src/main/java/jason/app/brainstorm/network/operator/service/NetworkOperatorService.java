@@ -10,5 +10,7 @@ public interface NetworkOperatorService extends Predicate{
 	public void handleServiceUrl(Exchange exchange);
 	
 	public void setNounce(Exchange exchange);
+	
+	public void detectIpChange(Exchange exchange) throws IllegalAccessException;
 
 }

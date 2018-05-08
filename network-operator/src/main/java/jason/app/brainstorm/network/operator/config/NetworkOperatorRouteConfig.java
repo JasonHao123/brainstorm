@@ -99,10 +99,10 @@ public class NetworkOperatorRouteConfig {
 	            
 	            from("seda:process")
                     .removeHeaders("CamelHttp*")
-	                .unmarshal().base64()
-	                .unmarshal(cryptoFormat)
-	                .log("${in.body}")
-                    .idempotentConsumer( jsonpath("header.app.transactionId"),jpaStore())
+//	                .unmarshal().base64()
+//	                .unmarshal(cryptoFormat)
+	                .bean(networkOperatorService,"detectIpChange")
+                    .idempotentConsumer( jsonpath("header.app.requestId"),jpaStore())
                     .setHeader("country", jsonpath("header.app.country"))
                     .setHeader("version", jsonpath("header.app.version"))
                     .setHeader("X-CSRF-TOKEN",jsonpath("header.app.nounce"))
@@ -112,8 +112,8 @@ public class NetworkOperatorRouteConfig {
                     .convertBodyTo(String.class)
                     .bean(networkOperatorService,"setNounce")
                     .removeHeaders("*")
-                    .marshal(cryptoFormat)
-                    .marshal().base64()
+//                    .marshal(cryptoFormat)
+//                    .marshal().base64()
                     ;
                 
                 from("direct:dead")

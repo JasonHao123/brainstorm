@@ -166,6 +166,20 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 		}
 	}
 
+	@Override
+	public void detectIpChange(Exchange exchange) throws IllegalAccessException {
+		String remoteIp = (String) exchange.getProperty("remoteHost");
+		Session session = sessionRepository.getSession((String) exchange.getProperty("SESSION"));
+		if(session!=null) {
+			String sessionIp = session.getAttribute("remoteIp");
+			if(sessionIp==null) {
+				redisTemplate.opsForHash().put("spring:session:sessions:"+exchange.getProperty("SESSION"), "sessionAttr:remoteIp", remoteIp);
+			}else if(!remoteIp.equals(sessionIp)) {
+				throw new IllegalAccessException();
+			}
+		}
+		
+	}
 	
 	
 }
