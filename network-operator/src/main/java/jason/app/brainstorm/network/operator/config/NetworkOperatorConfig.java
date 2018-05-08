@@ -15,7 +15,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 public class NetworkOperatorConfig {
 	@Bean
 	public LettuceConnectionFactory connectionFactory() {
-		return new LettuceConnectionFactory("192.168.11.251",6379); 
+		return new LettuceConnectionFactory("192.168.2.1",6379); 
 	}
 	
 	 @Bean

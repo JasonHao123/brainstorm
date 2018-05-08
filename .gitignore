@@ -25,3 +25,10 @@ network-operator/.project
 .project
 .settings/org.eclipse.core.resources.prefs
 .settings/org.eclipse.m2e.core.prefs
+network-operator/.settings/org.eclipse.core.resources.prefs
+network-operator/.settings/org.eclipse.jdt.core.prefs
+network-operator/.settings/org.eclipse.m2e.core.prefs
+customer-service/.settings/org.eclipse.core.resources.prefs
+customer-service/.settings/org.eclipse.jdt.core.prefs
+customer-service/.settings/org.eclipse.m2e.core.prefs
+.classpath

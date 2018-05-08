@@ -108,11 +108,8 @@ public class CustomerRoutesConfig {
                 from("direct:see")
                // .policy("user")
                 .to("bean:userService?method=test")
-                .to("direct:load")
                 .transform().simple("<html><body>Hi!, I'm jason on ${camelId}/${routeId} ${in.body}</body></html>");
                 
-                from("direct:load")
-                .loadBalance().to("edmi://getCustomerInfo","nfs:offlineData").failover();
             }
         };
     }

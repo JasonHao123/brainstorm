@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
 	@Bean
 	public LettuceConnectionFactory connectionFactory() {
-		return new LettuceConnectionFactory("192.168.11.251",6379); 
+		return new LettuceConnectionFactory("192.168.2.1",6379); 
 	}
 	
 	@Bean
