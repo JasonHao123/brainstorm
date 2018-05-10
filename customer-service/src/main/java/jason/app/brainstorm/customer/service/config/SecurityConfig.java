@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -43,11 +44,14 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableWebSecurity
 @EnableRedisHttpSession
 @Configuration
+@ConfigurationProperties("redis")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    
+	private String host;
+	
+	private int port;
 	@Bean
 	public LettuceConnectionFactory connectionFactory() {
-		return new LettuceConnectionFactory("192.168.2.1",6379); 
+		return new LettuceConnectionFactory(host,port);
 	}
 	
 	@Bean
@@ -104,4 +108,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.withUser("user").password("password").roles("USER");
 	}
 	// @formatter:on
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
 }

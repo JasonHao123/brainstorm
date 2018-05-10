@@ -18,37 +18,26 @@ public class SystemServiceGroupVersion {
 	@Version
 	private Long version;
 	
-	@ManyToOne
-	private SystemVersion systemVersion;
+	@Column
+	private String systemName;
 	
-	@ManyToOne
-	private ServiceGroup serviceGroup;
+	@Column
+	private String systemVersion;
+	
+	@Column
+	private String serviceGroup;
+	
+	@Column
+	private boolean global;
 	
 	@Column
 	private String serviceVersion;
+	
+	@Column
+	private String country;
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public ServiceGroup getServiceGroup() {
-		return serviceGroup;
-	}
-
-	public void setServiceGroup(ServiceGroup serviceGroup) {
-		this.serviceGroup = serviceGroup;
-	}
-
-	public SystemVersion getSystemVersion() {
-		return systemVersion;
-	}
-
-	public void setSystemVersion(SystemVersion systemVersion) {
-		this.systemVersion = systemVersion;
 	}
 
 	public Long getVersion() {
@@ -59,6 +48,38 @@ public class SystemServiceGroupVersion {
 		this.version = version;
 	}
 
+	public String getSystemName() {
+		return systemName;
+	}
+
+	public void setSystemName(String systemName) {
+		this.systemName = systemName;
+	}
+
+	public String getSystemVersion() {
+		return systemVersion;
+	}
+
+	public void setSystemVersion(String systemVersion) {
+		this.systemVersion = systemVersion;
+	}
+
+	public String getServiceGroup() {
+		return serviceGroup;
+	}
+
+	public void setServiceGroup(String serviceGroup) {
+		this.serviceGroup = serviceGroup;
+	}
+
+	public boolean isGlobal() {
+		return global;
+	}
+
+	public void setGlobal(boolean global) {
+		this.global = global;
+	}
+
 	public String getServiceVersion() {
 		return serviceVersion;
 	}
@@ -66,6 +87,18 @@ public class SystemServiceGroupVersion {
 	public void setServiceVersion(String serviceVersion) {
 		this.serviceVersion = serviceVersion;
 	}
-	
-	
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
 }

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.http.common.HttpMessage;
@@ -15,12 +14,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.session.Session;
-import org.springframework.session.SessionRepository;
 import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 import org.springframework.stereotype.Service;
 
 import jason.app.brainstorm.network.operator.entity.HostBlackListItem;
+import jason.app.brainstorm.network.operator.entity.SystemServiceGroupVersion;
+import jason.app.brainstorm.network.operator.entity.VersionRule;
 import jason.app.brainstorm.network.operator.repository.BlackListRepository;
+import jason.app.brainstorm.network.operator.repository.SystemServiceGroupVersionRepository;
+import jason.app.brainstorm.network.operator.repository.VersionRuleRepository;
+import jason.app.brainstorm.network.operator.rule.IRule;
 import jason.app.brainstorm.network.operator.service.NetworkOperatorService;
 
 @Service
@@ -32,6 +35,12 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 	private int forbidden;
 	@Autowired
 	private BlackListRepository blackListRepo;
+	
+	@Autowired
+	private SystemServiceGroupVersionRepository systemServiceGroupRepo;
+	
+	@Autowired
+	private VersionRuleRepository versionRuleRepo;
 
 
 	@Autowired
@@ -151,9 +160,41 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 	@Override
 	public void handleServiceUrl(Exchange exchange) {
 		// TODO Auto-generated method stub
-		String url = null;
-		
-		exchange.setProperty("serviceUrl", url);
+		//"${header.country}-${header.serviceGroup}-${header.version}/camel/${header.serviceId}
+		String system = (String) exchange.getProperty("system");
+		String country = (String) exchange.getProperty("country");
+		String version = (String) exchange.getProperty("version");
+		String serviceGroup = (String) exchange.getIn().getHeader("serviceGroup");
+		String service = (String) exchange.getIn().getHeader("serviceId");
+		SystemServiceGroupVersion group = systemServiceGroupRepo.findFirstByCountryIsNullOrCountryIsAndSystemNameAndSystemVersionAndServiceGroupOrderByCountryDesc(country,system,version,serviceGroup);
+		if(group==null) {
+			throw new RuntimeException("invalid access");
+		}
+		VersionRule rule = versionRuleRepo.findFirstByServiceVersion_systemNameAndServiceVersion_countryAndServiceVersion_systemVersionAndServiceVersion_serviceGroupAndServiceVersion_service(system, country, version, serviceGroup, service);
+		String serviceVersion = group.getServiceVersion();
+		if(rule!=null) {
+			try {
+				Class clazz = Class.forName(rule.getClazz());
+				IRule ruleObj = (IRule) clazz.newInstance();
+				serviceVersion = ruleObj.run(rule.getParameters());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		String url = "";
+		if(!group.isGlobal()) {
+			url = url + country+"-";
+		}
+		url = url+serviceGroup+"-"+serviceVersion;
+		exchange.getIn().setHeader("serviceUrl", url);
 	}
 
 	@Override
