@@ -72,18 +72,9 @@ public class NetworkOperatorRouteConfig {
                 onException(Exception.class).bean(networkOperatorService,"recordFailure");
 //                errorHandler(deadLetterChannel("direct:dead"));
                 
-                //byte[] decodedKey = Base64.getDecoder().decode(key);
-               // SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, keyAlgorithm);
-                
-                //IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
                 SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), keyAlgorithm);
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat(cryptoAlgorithm, secretKey);
                 cryptoFormat.setInitializationVector(initializationVector.getBytes("UTF-8"));
-
-                
-                // process route config from folder
-                from("file:///opt/config?preMove=inprogress") .convertBodyTo(String.class).log("${body}");
-
                 
                 rest("/api")
                     .post("/{serviceGroup}/{serviceId}")
@@ -107,12 +98,14 @@ public class NetworkOperatorRouteConfig {
                     .setProperty("country", jsonpath("header.app.country"))
                     .setProperty("version", jsonpath("header.app.version"))
                     .setHeader("X-CSRF-TOKEN",jsonpath("header.app.nounce"))
+                    .setProperty("nonce",jsonpath("header.app.nounce"))
                     .setProperty("SESSION",jsonpath("header.app.session"))
+                    .setHeader("SESSION",jsonpath("header.app.session"))
                     .setHeader("Cookie",constant("SESSION=").append(jsonpath("header.app.session")))
-                    .bean(networkOperatorService,"handleServiceUrl")
-                    .log("${header.serviceUrl}")
-                    .serviceCall("${header.serviceUrl}/camel/${header.serviceId}")
-//                    .serviceCall("${header.country}-${header.serviceGroup}-${header.version}/camel/${header.serviceId}")
+//                    .bean(networkOperatorService,"handleServiceUrl")
+//                    .log("${header.serviceUrl}")
+//                    .serviceCall("${header.serviceUrl}/say/${header.serviceId}")
+                    .serviceCall("${header.serviceGroup}/say/${header.serviceId}")
                     .convertBodyTo(String.class)
                     .bean(networkOperatorService,"setNounce")
                     .removeHeaders("*")

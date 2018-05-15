@@ -11,8 +11,6 @@ import org.apache.camel.http.common.HttpMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.session.Session;
 import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 import org.springframework.stereotype.Service;
@@ -44,7 +42,7 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 
 
 	@Autowired
-	private RedisTemplate<String, CsrfToken> redisTemplate;
+	private RedisTemplate<String, String> redisTemplate;
 	
 	@Autowired
 	private RedisOperationsSessionRepository sessionRepository;
@@ -159,8 +157,8 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 
 	@Override
 	public void handleServiceUrl(Exchange exchange) {
-		// TODO Auto-generated method stub
-		//"${header.country}-${header.serviceGroup}-${header.version}/camel/${header.serviceId}
+		// nounce check
+		checkNounce((String) exchange.getProperty("SESSION"),(String) exchange.getProperty("nonce"));
 		String system = (String) exchange.getProperty("system");
 		String country = (String) exchange.getProperty("country");
 		String version = (String) exchange.getProperty("version");
@@ -197,13 +195,24 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 		exchange.getIn().setHeader("serviceUrl", url);
 	}
 
+	private void checkNounce(String sessionId,String nonce) {
+		// TODO Auto-generated method stub
+		Session session = sessionRepository.getSession(sessionId);
+		if(session!=null) {
+			String token = (String) redisTemplate.opsForHash().get("spring:session:sessions:"+sessionId, "sessionAttr:nonce");
+			if(token!=null && !token.equals(nonce)) {
+				throw new RuntimeException("Illegal access!");
+			}
+		}
+	}
+
 	@Override
 	public void setNounce(Exchange exchange) {
 		Session session = sessionRepository.getSession((String) exchange.getProperty("SESSION"));
 		if(session!=null) {
-			DefaultCsrfToken token =  new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
-			redisTemplate.opsForHash().put("spring:session:sessions:"+exchange.getProperty("SESSION"), "sessionAttr:org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN", token);
-			exchange.getOut().setBody(exchange.getIn().getBody()+"   "+token.getToken());
+			String token =  UUID.randomUUID().toString();
+			redisTemplate.opsForHash().put("spring:session:sessions:"+exchange.getProperty("SESSION"), "sessionAttr:nonce", token);
+			exchange.getOut().setBody(exchange.getIn().getBody()+"   "+token);
 		}
 	}
 

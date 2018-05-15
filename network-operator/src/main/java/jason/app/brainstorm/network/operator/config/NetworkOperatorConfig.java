@@ -5,10 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericToStringSerializer;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
@@ -24,12 +21,12 @@ public class NetworkOperatorConfig {
 	}
 	
 	 @Bean
-	 RedisTemplate< String, CsrfToken > redisTemplate() {
-	  final RedisTemplate< String, CsrfToken > template =  new RedisTemplate< String, CsrfToken >();
+	 RedisTemplate< String, String > redisTemplate() {
+	  final RedisTemplate< String, String > template =  new RedisTemplate< String, String >();
 	  template.setConnectionFactory( connectionFactory() );
 	  template.setKeySerializer( new StringRedisSerializer() );
 	  template.setHashKeySerializer( new StringRedisSerializer() );
-	  template.setHashValueSerializer( new JdkSerializationRedisSerializer() );
+	  template.setHashValueSerializer( new StringRedisSerializer() );
 	  return template;
 	 }
 

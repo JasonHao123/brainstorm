@@ -25,8 +25,7 @@ import org.apache.ofbiz.base.container.Container;
 import org.apache.ofbiz.base.container.ContainerException;
 import org.apache.ofbiz.base.start.StartupCommand;
 import org.apache.ofbiz.base.util.Debug;
-
-import jason.app.ofbiz.camel.config.CamelConfig;
+import org.springframework.session.data.redis.CamelConfig;
 
 /**
  * A container for Apache Camel.
