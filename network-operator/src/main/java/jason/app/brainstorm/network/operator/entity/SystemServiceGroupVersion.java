@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Version;
 
 @Entity
@@ -28,6 +29,9 @@ public class SystemServiceGroupVersion {
 	private String serviceGroup;
 	
 	@Column
+	private String dockerGroup;
+	
+	@Column
 	private boolean global;
 	
 	@Column
@@ -35,6 +39,9 @@ public class SystemServiceGroupVersion {
 	
 	@Column
 	private String country;
+	
+	@Column
+	private boolean nonceCheck;
 
 	public Long getId() {
 		return id;
@@ -98,6 +105,22 @@ public class SystemServiceGroupVersion {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getDockerGroup() {
+		return dockerGroup;
+	}
+
+	public void setDockerGroup(String dockerGroup) {
+		this.dockerGroup = dockerGroup;
+	}
+
+	public boolean isNonceCheck() {
+		return nonceCheck;
+	}
+
+	public void setNonceCheck(boolean nonceCheck) {
+		this.nonceCheck = nonceCheck;
 	}
 
 

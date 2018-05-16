@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 
 import jason.app.brainstorm.network.operator.entity.HostBlackListItem;
 import jason.app.brainstorm.network.operator.entity.SystemServiceGroupVersion;
-import jason.app.brainstorm.network.operator.entity.VersionRule;
+import jason.app.brainstorm.network.operator.entity.SystemServiceVersion;
 import jason.app.brainstorm.network.operator.repository.BlackListRepository;
 import jason.app.brainstorm.network.operator.repository.SystemServiceGroupVersionRepository;
-import jason.app.brainstorm.network.operator.repository.VersionRuleRepository;
+import jason.app.brainstorm.network.operator.repository.SystemServiceVersionRepository;
 import jason.app.brainstorm.network.operator.rule.IRule;
 import jason.app.brainstorm.network.operator.service.NetworkOperatorService;
 
@@ -38,7 +38,7 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 	private SystemServiceGroupVersionRepository systemServiceGroupRepo;
 	
 	@Autowired
-	private VersionRuleRepository versionRuleRepo;
+	private SystemServiceVersionRepository serviceRepo;
 
 
 	@Autowired
@@ -157,8 +157,6 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 
 	@Override
 	public void handleServiceUrl(Exchange exchange) {
-		// nounce check
-		checkNounce((String) exchange.getProperty("SESSION"),(String) exchange.getProperty("nonce"));
 		String system = (String) exchange.getProperty("system");
 		String country = (String) exchange.getProperty("country");
 		String version = (String) exchange.getProperty("version");
@@ -168,30 +166,41 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 		if(group==null) {
 			throw new RuntimeException("invalid access");
 		}
-		VersionRule rule = versionRuleRepo.findFirstByServiceVersion_systemNameAndServiceVersion_countryAndServiceVersion_systemVersionAndServiceVersion_serviceGroupAndServiceVersion_service(system, country, version, serviceGroup, service);
+		SystemServiceVersion serviceObj = serviceRepo.findFirstByServiceGroup_systemNameAndServiceGroup_countryAndServiceGroup_systemVersionAndServiceGroup_serviceGroupAndService(system, country, version, serviceGroup, service);
+		// nounce check
+		if(serviceObj!=null && serviceObj.isNonceCheck()) {
+			checkNounce((String) exchange.getProperty("SESSION"),(String) exchange.getProperty("nonce"));
+		}else if(serviceObj==null && group.isNonceCheck()) {
+			checkNounce((String) exchange.getProperty("SESSION"),(String) exchange.getProperty("nonce"));
+		}
 		String serviceVersion = group.getServiceVersion();
-		if(rule!=null) {
-			try {
-				Class clazz = Class.forName(rule.getClazz());
-				IRule ruleObj = (IRule) clazz.newInstance();
-				serviceVersion = ruleObj.run(rule.getParameters());
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+		if(serviceObj!=null && serviceObj.getServiceVersion()!=null) {
+			serviceVersion = serviceObj.getServiceVersion();
 		}
-		String url = "";
+		String url = null;
 		if(!group.isGlobal()) {
-			url = url + country+"-";
+			url = country;
 		}
-		url = url+serviceGroup+"-"+serviceVersion;
+		if(serviceVersion!=null) {
+			if(url==null) {
+				url = serviceVersion;
+			}else {
+				url = url+"-"+serviceVersion;
+			}
+		}
+		if(group.getDockerGroup()!=null) {
+			if(url==null) {
+				url = group.getDockerGroup();
+			}else {
+				url = url+"-"+group.getDockerGroup();
+			}
+		}else {
+			if(url==null) {
+				url = serviceGroup;
+			}else {
+				url = url+"-"+ serviceGroup;
+			}
+		}
 		exchange.getIn().setHeader("serviceUrl", url);
 	}
 
