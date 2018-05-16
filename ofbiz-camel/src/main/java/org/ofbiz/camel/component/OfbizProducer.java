@@ -43,14 +43,20 @@ public class OfbizProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         String serviceName = getServiceName(exchange);
+        System.out.println("-------------------------------");
+        System.out.println(serviceName);
+        System.out.println("-------------------------------");
         Map<String, Object> headers = exchange.getIn().getHeaders();
         Map<String, ? extends Object> parameters = getServiceParameters(headers);
-
-        LOG.info("Calling Ofbiz service [{}] with parameters [{}]", serviceName, parameters);
-        Map<String, Object> result = ofbizEndpoint.getDispatcher().runSync(serviceName, parameters);
-        LOG.info("Ofbiz service [{}] result [{}]", serviceName, result);
-
-        exchange.getOut().setBody(result);
+        if(ofbizEndpoint.getDispatcher()!=null) {
+	        LOG.info("Calling Ofbiz service [{}] with parameters [{}]", serviceName, parameters);
+	        Map<String, Object> result = ofbizEndpoint.getDispatcher().runSync(serviceName, parameters);
+	        LOG.info("Ofbiz service [{}] result [{}]", serviceName, result);
+	        System.out.println("-------------------------------");
+	        System.out.println(result);
+	        System.out.println("-------------------------------");
+        }
+        exchange.getOut().setBody("Hello world!");
     }
 
     private String getServiceName(Exchange exchange) {

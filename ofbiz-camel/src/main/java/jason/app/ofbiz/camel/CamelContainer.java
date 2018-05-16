@@ -40,6 +40,7 @@ public class CamelContainer implements Container {
 	public void init(List<StartupCommand> ofbizCommands, String name, String configFile) throws ContainerException {
 		this.name = name;
 		main = new Main();
+		main.setBasedPackages("org.springframework.session.data.redis");
 		main.setConfigClass(CamelConfig.class);
 	}
 
