@@ -16,15 +16,12 @@
  */
 package jason.app.brainstorm.network.operator.config;
 
-import java.util.Base64;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.crypto.CryptoDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +29,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.SessionRepository;
 
+import jason.app.brainstorm.network.api.request.NetworkRequest;
+import jason.app.brainstorm.network.api.response.NetworkResponse;
 import jason.app.brainstorm.network.operator.service.NetworkOperatorService;
 
 @Configuration
@@ -94,21 +92,22 @@ public class NetworkOperatorRouteConfig {
 //	                .unmarshal(cryptoFormat)
 	                .bean(networkOperatorService,"detectIpChange")
                   //  .idempotentConsumer( jsonpath("header.app.requestId"),jpaStore())
-                    .setProperty("system", jsonpath("header.app.system"))
-                    .setProperty("country", jsonpath("header.app.country"))
-                    .setProperty("version", jsonpath("header.app.version"))
-                    .setHeader("X-CSRF-TOKEN",jsonpath("header.app.nounce"))
-                    .setProperty("nonce",jsonpath("header.app.nounce"))
-                    .setProperty("SESSION",jsonpath("header.app.session"))
-                    .setHeader("SESSION",jsonpath("header.app.session"))
-                    .setHeader("Cookie",constant("SESSION=").append(jsonpath("header.app.session")))
+                    .setHeader("X-CSRF-TOKEN",jsonpath("header.security.nounce"))
+                    .setProperty("nonce",jsonpath("header.security.nounce"))
+                    .setProperty("SESSION",jsonpath("header.security.session"))
+                    .setHeader("SESSION",jsonpath("header.security.session"))
+                    .setHeader("Cookie",constant("SESSION=").append(jsonpath("header.security.session")))
+                    .unmarshal().json(JsonLibrary.Jackson,NetworkRequest.class)
                     .bean(networkOperatorService,"handleServiceUrl")
-                    .log("${header.serviceUrl}")
-                    .serviceCall("${header.serviceUrl}/say/${header.serviceId}")
-//                    .serviceCall("${header.serviceGroup}/say/${header.serviceId}")
-                    .convertBodyTo(String.class)
-                    .bean(networkOperatorService,"setNounce")
+                    .log("${header.serviceGroupUrl}/${header.serviceUrl}")
+                    .serviceCall("${header.serviceGroupUrl}/${header.serviceUrl}")
+ //                   .convertBodyTo(String.class,"UTF-8")
                     .removeHeaders("*")
+                    .log("${in.body}")
+ //                   .unmarshal().json(JsonLibrary.Jackson,NetworkResponse.class)
+                    .bean(networkOperatorService,"updateHeader")
+ //                   .log("${in.body}")
+ //                   .removeHeaders("*")
 //                    .marshal(cryptoFormat)
 //                    .marshal().base64()
                     ;

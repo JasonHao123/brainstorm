@@ -41,6 +41,9 @@ public class SystemServiceGroupVersion {
 	private String country;
 	
 	@Column
+	private String contextPath;
+	
+	@Column
 	private boolean nonceCheck;
 
 	public Long getId() {
@@ -121,6 +124,14 @@ public class SystemServiceGroupVersion {
 
 	public void setNonceCheck(boolean nonceCheck) {
 		this.nonceCheck = nonceCheck;
+	}
+
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 
 

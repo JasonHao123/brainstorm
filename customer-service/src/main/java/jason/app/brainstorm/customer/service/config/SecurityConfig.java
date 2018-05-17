@@ -71,24 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	// @formatter:off
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().requireCsrfProtectionMatcher(new RequestMatcher() {
-	        private Pattern allowedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS)$");
-	        private RegexRequestMatcher apiMatcher = new RegexRequestMatcher("/v[0-9]*/.*", null);
-
-	        @Override
-	        public boolean matches(HttpServletRequest request) {
-	            // No CSRF due to allowedMethod
-	            if(allowedMethods.matcher(request.getMethod()).matches())
-	                return false;
-
-	            // No CSRF due to api call
-	            if(request.getRequestURL().toString().endsWith("/camel/initLogin")) {
-	            		return false;
-	            }
-	            // CSRF for everything else that is not an API call or an allowedMethod
-	            return true;
-	        }
-	    }).and()
+		http.csrf().disable()
 		.anonymous().principal("guest").authorities("ROLE_GUEST").and()//<anonymous username="guest" granted-authority="ROLE_GUEST" />
 				.authorizeRequests()
 					.antMatchers("/css/**", "/index","/login**","/camel/api-doc","/camel/initLogin","/camel/login").permitAll()

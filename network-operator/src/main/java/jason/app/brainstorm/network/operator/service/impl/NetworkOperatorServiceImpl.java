@@ -1,5 +1,7 @@
 package jason.app.brainstorm.network.operator.service.impl;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -11,22 +13,33 @@ import org.apache.camel.http.common.HttpMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.session.Session;
 import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jason.app.brainstorm.network.api.request.NetworkRequest;
+import jason.app.brainstorm.network.api.response.NetworkResponse;
+import jason.app.brainstorm.network.api.vo.AppHeader;
+import jason.app.brainstorm.network.api.vo.Header;
+import jason.app.brainstorm.network.api.vo.SecurityHeader;
 import jason.app.brainstorm.network.operator.entity.HostBlackListItem;
 import jason.app.brainstorm.network.operator.entity.SystemServiceGroupVersion;
 import jason.app.brainstorm.network.operator.entity.SystemServiceVersion;
 import jason.app.brainstorm.network.operator.repository.BlackListRepository;
 import jason.app.brainstorm.network.operator.repository.SystemServiceGroupVersionRepository;
 import jason.app.brainstorm.network.operator.repository.SystemServiceVersionRepository;
-import jason.app.brainstorm.network.operator.rule.IRule;
 import jason.app.brainstorm.network.operator.service.NetworkOperatorService;
 
 @Service
 @ConfigurationProperties("blacklist")
 public class NetworkOperatorServiceImpl implements NetworkOperatorService {
+	private ObjectMapper mapper = new ObjectMapper();
+	private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
 	private Calendar calendar = Calendar.getInstance();
 	private int punishCount;
 	private int punishTime;
@@ -42,7 +55,7 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 
 
 	@Autowired
-	private RedisTemplate<String, String> redisTemplate;
+	private RedisTemplate<String, CsrfToken> redisTemplate;
 	
 	@Autowired
 	private RedisOperationsSessionRepository sessionRepository;
@@ -157,9 +170,10 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 
 	@Override
 	public void handleServiceUrl(Exchange exchange) {
-		String system = (String) exchange.getProperty("system");
-		String country = (String) exchange.getProperty("country");
-		String version = (String) exchange.getProperty("version");
+		NetworkRequest request = (NetworkRequest) exchange.getIn().getBody();
+		String system = request.getHeader().getApp().getSystem();
+		String country = request.getHeader().getApp().getCountry();
+		String version = request.getHeader().getApp().getVersion();
 		String serviceGroup = (String) exchange.getIn().getHeader("serviceGroup");
 		String service = (String) exchange.getIn().getHeader("serviceId");
 		SystemServiceGroupVersion group = systemServiceGroupRepo.findFirstByCountryIsNullOrCountryIsAndSystemNameAndSystemVersionAndServiceGroupOrderByCountryDesc(country,system,version,serviceGroup);
@@ -201,28 +215,55 @@ public class NetworkOperatorServiceImpl implements NetworkOperatorService {
 				url = url+"-"+ serviceGroup;
 			}
 		}
-		exchange.getIn().setHeader("serviceUrl", url);
+		exchange.getIn().setHeader("serviceGroupUrl", url);
+		if(group.getContextPath()!=null) {
+			service = group.getContextPath()+service;
+		}
+		exchange.getIn().setHeader("serviceUrl", service);
+		
 	}
 
 	private void checkNounce(String sessionId,String nonce) {
 		// TODO Auto-generated method stub
 		Session session = sessionRepository.getSession(sessionId);
 		if(session!=null) {
-			String token = (String) redisTemplate.opsForHash().get("spring:session:sessions:"+sessionId, "sessionAttr:nonce");
-			if(token!=null && !token.equals(nonce)) {
+			CsrfToken token = (CsrfToken) redisTemplate.opsForHash().get("spring:session:sessions:"+sessionId, "sessionAttr:org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN");
+			if(token!=null && !token.getToken().equals(nonce)) {
 				throw new RuntimeException("Illegal access!");
 			}
 		}
 	}
 
 	@Override
-	public void setNounce(Exchange exchange) {
+	public void updateHeader(Exchange exchange) throws IOException {
+		NetworkResponse response = null;
+		try {
+			response = mapper.readValue((byte[])exchange.getIn().getBody(),NetworkResponse.class);
+		}catch(JsonParseException e) {
+			response = new NetworkResponse();
+			response.setBody(exchange.getIn().getBody());
+		}
+		
+		if(response.getHeader()==null) {
+			response.setHeader(new Header());
+		}
+		if(response.getHeader().getSecurity()==null) {
+			response.getHeader().setSecurity(new SecurityHeader());
+		}
+		if(response.getHeader().getApp()==null) {
+			response.getHeader().setApp(new AppHeader());
+		}
+		response.getHeader().getSecurity().setSession((String) exchange.getProperty("SESSION"));
+		response.getHeader().getApp().setTime(format.format(new Date()));
 		Session session = sessionRepository.getSession((String) exchange.getProperty("SESSION"));
 		if(session!=null) {
-			String token =  UUID.randomUUID().toString();
-			redisTemplate.opsForHash().put("spring:session:sessions:"+exchange.getProperty("SESSION"), "sessionAttr:nonce", token);
-			exchange.getOut().setBody(exchange.getIn().getBody()+"   "+token);
+			DefaultCsrfToken token =  new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
+			redisTemplate.opsForHash().put("spring:session:sessions:"+exchange.getProperty("SESSION"), "sessionAttr:org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN", token);
+			response.getHeader().getSecurity().setNounce(token.getToken());
 		}
+		String output = mapper.writeValueAsString(response);
+		exchange.getOut().setBody(output);
+		exchange.getOut().setHeader("Content-Type", "application/json");
 	}
 
 	@Override

@@ -48,5 +48,6 @@
 	<modules>
 		<module>network-operator</module>
 		<module>customer-service</module>
+    <module>network-api</module>
   </modules>
 </project>
