@@ -32,3 +32,5 @@ customer-service/.settings/org.eclipse.core.resources.prefs
 customer-service/.settings/org.eclipse.jdt.core.prefs
 customer-service/.settings/org.eclipse.m2e.core.prefs
 .classpath
+org.eclipse.m2e.core.prefs
+org.eclipse.jdt.core.prefs

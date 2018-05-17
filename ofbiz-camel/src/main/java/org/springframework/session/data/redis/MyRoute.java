@@ -25,22 +25,17 @@ import org.springframework.stereotype.Component;
 public class MyRoute extends RouteBuilder {
 	@Autowired
 	private SomeBean someBean;
-	
+
     @Override
     public void configure() throws Exception {
         // you can configure the route rule with Java DSL here
     		restConfiguration().contextPath("/").bindingMode(RestBindingMode.auto).host("0.0.0.0").port(8088);
- //   	from("timer://foo?fixedRate=true&period=2000").transform().simple("Ping at ${date:now:yyyy-MM-dd HH:mm:ss}").to("log:hello").to("mock:end");
+//    	from("timer://foo?fixedRate=true&period=2000").to("ofbiz://getAllCategories?dispatcher=#dispatcher").transform().simple("Ping at ${date:now:yyyy-MM-dd HH:mm:ss}").to("log:hello").to("mock:end");
 
     	 rest("/say")
-         .get("/hello").to("direct:hello")
-         .get("/bye").consumes("application/json").to("direct:bye")
-         .post("/bye").to("mock:update");
-
-     from("direct:hello").to("ofbiz://createNote?dispatcher=#dispatcher")
-         .transform().constant("Hello World");
-     from("direct:bye").to("ofbiz://createNote?dispatcher=#dispatcher")
-         .transform().constant("Bye World");
+         .post("/bye").to("direct:bye");
+				 from("direct:bye").to("ofbiz://getAllCategories?dispatcher=#dispatcher");
+     		//from("direct:bye").to("ofbiz://getAllCategories?dispatcher=#dispatcher");
     }
 
 }
