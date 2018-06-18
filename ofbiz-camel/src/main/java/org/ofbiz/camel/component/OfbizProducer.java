@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,8 @@ public class OfbizProducer extends DefaultProducer {
 
     private final OfbizEndpoint ofbizEndpoint;
     private final String remaining;
+    
+    private final ObjectMapper mapper = new ObjectMapper();
 
 
     public OfbizProducer(OfbizEndpoint ofbizEndpoint, String remaining) {
@@ -55,8 +58,10 @@ public class OfbizProducer extends DefaultProducer {
 	        System.out.println("-------------------------------");
 	        System.out.println(result);
 	        System.out.println("-------------------------------");
+	        exchange.getOut().setBody(mapper.writeValueAsString(result));
+        }else {
+        		exchange.getOut().setBody("Hello world!");
         }
-        exchange.getOut().setBody("Hello world!");
     }
 
     private String getServiceName(Exchange exchange) {
