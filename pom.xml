@@ -49,5 +49,7 @@
 		<module>network-operator</module>
 		<module>customer-service</module>
     <module>network-api</module>
+    <module>camel-gateway</module>
+    <module>security-service</module>
   </modules>
 </project>
