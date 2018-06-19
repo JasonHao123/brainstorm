@@ -16,12 +16,14 @@
  */
 package jason.app.brainstorm.camel.gateway.route;
 
+import static org.apache.camel.model.rest.RestParamType.body;
+import static org.apache.camel.model.rest.RestParamType.path;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
-import static org.apache.camel.model.rest.RestParamType.body;
-import static org.apache.camel.model.rest.RestParamType.path;
+import jason.app.brainstorm.camel.gateway.model.User;
 
 /**
  * A simple Camel REST DSL route with Swagger API documentation.
