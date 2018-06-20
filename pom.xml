@@ -51,5 +51,6 @@
     <module>network-api</module>
     <module>camel-gateway</module>
     <module>security-service</module>
+  	<module>spring-boot-ofbiz</module>
   </modules>
 </project>
