@@ -1,5 +1,7 @@
 package jason.app.brainstorm.camel.gateway.config;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,12 +42,13 @@ public class HttpSessionConfig {
 	}
 	
 	 @Bean
-	 RedisTemplate< String, CsrfToken> redisTemplate() {
-	  final RedisTemplate< String, CsrfToken > template =  new RedisTemplate< String, CsrfToken >();
+	 RedisTemplate< String, List<String>> redisTemplate() {
+	  final RedisTemplate< String, List<String> > template =  new RedisTemplate< String, List<String> >();
 	  template.setConnectionFactory( connectionFactory() );
 	  template.setKeySerializer( new StringRedisSerializer() );
-	  template.setHashKeySerializer( new StringRedisSerializer() );
-	  template.setHashValueSerializer( new JdkSerializationRedisSerializer() );
+	  template.setValueSerializer(new JdkSerializationRedisSerializer());
+//	  template.setHashKeySerializer( new StringRedisSerializer() );
+//	  template.setHashValueSerializer( new JdkSerializationRedisSerializer() );
 	  return template;
 	 }
 }

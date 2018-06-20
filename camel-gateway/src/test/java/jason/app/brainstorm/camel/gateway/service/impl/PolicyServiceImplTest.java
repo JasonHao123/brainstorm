@@ -1,6 +1,9 @@
 package jason.app.brainstorm.camel.gateway.service.impl;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.junit.Test;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -20,7 +23,12 @@ public class PolicyServiceImplTest {
 		app.setCountry("CN");
 		app.setName("SCM");
 		app.setVersion("1.0");
-		service.decide(new AnonymousAuthenticationToken("GUEST", "GUEST", authorities),app, "/users");
+		long start = new Date().getTime();
+		for(int i=0;i<1000;i++) {
+			service.decide(new AnonymousAuthenticationToken("GUEST", "GUEST", authorities),null,app, "/users");
+		}
+		long end = new Date().getTime();
+		assertTrue(end-start<200);
 	}
 
 }
