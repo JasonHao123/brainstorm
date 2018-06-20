@@ -16,9 +16,7 @@
 	<groupId>jason.app.brainstorm</groupId>
 	<version>1.0</version>
 
-	<artifactId>network-operator</artifactId>
-	<name>camel-gateway</name>
-
+	<artifactId>camel-gateway</artifactId>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -110,6 +108,10 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-security</artifactId>
+		</dependency>
+				<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
