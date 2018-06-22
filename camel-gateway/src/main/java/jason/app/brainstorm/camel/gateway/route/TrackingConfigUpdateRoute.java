@@ -21,8 +21,8 @@ public class TrackingConfigUpdateRoute extends RouteBuilder {
     public void configure() throws Exception {
         JaxbDataFormat jaxb = new JaxbDataFormat(AppsConfig.class.getPackage().getName());
         
-    		from("file:src/data").convertBodyTo(String.class).unmarshal(jaxb).bean(appService,"loadConfig");
-    		from("file:src/data2").convertBodyTo(String.class).unmarshal(jaxb).bean(policyService,"loadConfig");
+    		from("file:/tmp/data").convertBodyTo(String.class).unmarshal(jaxb).bean(appService,"loadConfig");
+    		from("file:/tmp/data2").convertBodyTo(String.class).unmarshal(jaxb).bean(policyService,"loadConfig");
     }
 
 }

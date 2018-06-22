@@ -26,7 +26,7 @@
 		<spring.boot-version>1.5.10.RELEASE</spring.boot-version>
 		<spring.version>4.3.14.RELEASE</spring.version>
 		<camel.spring.boot-version>2.21.0</camel.spring.boot-version>
-		<docker.image.prefix>brainstorm</docker.image.prefix>
+		<docker.image.prefix>jasonhao123</docker.image.prefix>
 	</properties>
 
 	<dependencyManagement>
@@ -109,7 +109,7 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-security</artifactId>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http4</artifactId>
 		</dependency>
@@ -142,6 +142,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -154,6 +155,23 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<imageName>${docker.image.prefix}/${project.artifactId}-${project.version}</imageName>
+					<dockerDirectory>src/main/docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
