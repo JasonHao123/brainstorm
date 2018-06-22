@@ -1,0 +1,34 @@
+dependencies {
+    //Examples of compile-time and runtime dependencies
+
+    //pluginLibsCompile 'junit:junit-dep:4.10'
+    //pluginLibsRuntime 'junit:junit-dep:4.10'
+    pluginLibsCompile 'ch.qos.logback:logback-classic:1.2.3'
+	pluginLibsCompile 'org.springframework:spring-webmvc:4.3.18.RELEASE'
+	pluginLibsCompile 'javax.servlet:jstl:1.2'
+	pluginLibsCompile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
+	pluginLibsCompile 'org.springframework.session:spring-session-data-redis:1.3.2.RELEASE'
+	pluginLibsCompile 'org.springframework.security:spring-security-web:4.2.4.RELEASE'
+	pluginLibsCompile 'org.springframework.security:spring-security-core:4.2.4.RELEASE'
+	pluginLibsCompile 'org.springframework.security:spring-security-config:4.2.4.RELEASE'
+	pluginLibsCompile 'biz.paluch.redis:lettuce:3.5.0.Final'
+	
+	pluginLibsRuntime 'ch.qos.logback:logback-classic:1.2.3'
+	pluginLibsRuntime 'org.springframework:spring-webmvc:4.3.18.RELEASE'
+	pluginLibsRuntime 'javax.servlet:jstl:1.2'
+	pluginLibsRuntime 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
+	pluginLibsRuntime 'org.springframework.session:spring-session-data-redis:1.3.2.RELEASE'
+	pluginLibsRuntime 'org.springframework.security:spring-security-web:4.2.4.RELEASE'
+	pluginLibsRuntime 'org.springframework.security:spring-security-core:4.2.4.RELEASE'
+	pluginLibsRuntime 'org.springframework.security:spring-security-config:4.2.4.RELEASE'
+	pluginLibsRuntime 'biz.paluch.redis:lettuce:3.5.0.Final'
+		
+}
+
+task install << {
+    // Install logic for this plugin
+}
+
+task uninstall << {
+    // uninstall logic for this plugin
+}
