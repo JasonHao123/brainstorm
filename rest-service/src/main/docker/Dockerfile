@@ -1,11 +1,8 @@
 from  openjdk:8-jdk
 
-copy apache-ofbiz-16.11.04.zip  / 
-
-run   unzip  apache-ofbiz-16.11.04.zip
-copy gradle-wrapper.properties /apache-ofbiz-16.11.04/gradle/wrapper/
-copy gradle-2.13-bin.zip /apache-ofbiz-16.11.04/gradle/wrapper/
-copy mysql-connector-java-5.1.46.jar /apache-ofbiz-16.11.04/framework/entity/lib/
+run wget http://www.apache.org/dist/ofbiz/apache-ofbiz-16.11.04.zip  -O /apache-ofbiz-16.11.04.zip
+run unzip  apache-ofbiz-16.11.04.zip
+run wget http://search.maven.org/remotecontent?filepath=mysql/mysql-connector-java/5.1.46/mysql-connector-java-5.1.46.jar -O /apache-ofbiz-16.11.04/framework/entity/lib/mysql-connector-java-5.1.46.jar
 copy build.gradle /apache-ofbiz-16.11.04/
 
 copy component-load.xml /apache-ofbiz-16.11.04/specialpurpose/
