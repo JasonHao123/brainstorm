@@ -8,7 +8,7 @@ import jason.app.brainstorm.camel.gateway.model.AppsConfig;
 import jason.app.brainstorm.camel.gateway.service.ApplicationIdentificationService;
 import jason.app.brainstorm.camel.gateway.service.PolicyService;
 
-@Component
+//@Component
 public class HandlerRoute extends RouteBuilder {
 
 	@Autowired
