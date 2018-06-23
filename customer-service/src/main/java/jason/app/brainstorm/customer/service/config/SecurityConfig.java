@@ -76,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 					.antMatchers("/css/**", "/index","/login**","/camel/api-doc","/camel/initLogin","/camel/login").permitAll()
 					.antMatchers("/user/**").hasRole("USER")
-					.antMatchers("/camel/**").hasAnyRole("USER","ADMIN")//hasRole("USER")
+					.antMatchers("/camel/**").permitAll()//.hasAnyRole("USER","ADMIN")//hasRole("USER")
 					.and().formLogin()
 				//.formLogin().loginPage("/login").failureUrl("/login-error")
 					;
