@@ -92,13 +92,13 @@ public class CustomerRoutesConfig {
            // .policy("user")
             .to("bean:userService?method=logout");
 
-            rest("/initLogin").description("see user's product list")
-            .consumes("application/json")
-            .produces("application/json").post().description("see user's product list").to("direct:initLogin");
-
-            from("direct:initLogin")
-           // .policy("user")
-            .to("bean:userService?method=initLogin");
+//            rest("/initLogin").description("see user's product list")
+//            .consumes("application/json")
+//            .produces("application/json").post().description("see user's product list").to("direct:initLogin");
+//
+//            from("direct:initLogin")
+//           // .policy("user")
+//            .to("bean:userService?method=initLogin");
             
             	
                 rest("/see").description("see user's product list")

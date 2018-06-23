@@ -122,11 +122,6 @@
 			<artifactId>camel-test-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>jason.app.brainstorm</groupId>
-			<artifactId>network-api</artifactId>
-			<version>1.0</version>
-		</dependency>
 	</dependencies>
 
 

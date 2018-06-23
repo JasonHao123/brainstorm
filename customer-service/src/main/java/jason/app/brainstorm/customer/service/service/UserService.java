@@ -58,8 +58,8 @@ public interface UserService {
     
     void login(Exchange exchange);
     
-    void initLogin(Exchange exchange);
-    
+//    void initLogin(Exchange exchange);
+//    
     void logout(Exchange exchange);
 
 }

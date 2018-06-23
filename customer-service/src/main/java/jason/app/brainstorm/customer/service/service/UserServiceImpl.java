@@ -31,14 +31,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Service;
 
-import jason.app.brainstorm.customer.service.model.InitLoginResult;
 import jason.app.brainstorm.customer.service.model.LoginResult;
 import jason.app.brainstorm.customer.service.model.User;
-import jason.app.brainstorm.network.api.response.NetworkResponse;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -91,19 +88,19 @@ public class UserServiceImpl implements UserService {
 		exchange.getOut().setBody(result);
 	}
 
-	@Override
-	public void initLogin(Exchange exchange) {
-		HttpMessage message = (HttpMessage) exchange.getIn();
-//		CsrfToken token = csrfTokenRepository.generateToken(message.getRequest());
-		HttpSession session = message.getRequest().getSession(true);
-//		session.setAttribute("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN", token);
-		InitLoginResult result = new InitLoginResult();
-//		result.setCsrfToken(token.getToken());
-		result.setSessionId(session.getId());
-		NetworkResponse resp = new NetworkResponse();
-		resp.setBody(result);
-		exchange.getOut().setBody(resp);
-	}
+//	@Override
+//	public void initLogin(Exchange exchange) {
+//		HttpMessage message = (HttpMessage) exchange.getIn();
+////		CsrfToken token = csrfTokenRepository.generateToken(message.getRequest());
+//		HttpSession session = message.getRequest().getSession(true);
+////		session.setAttribute("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN", token);
+//		InitLoginResult result = new InitLoginResult();
+////		result.setCsrfToken(token.getToken());
+//		result.setSessionId(session.getId());
+//		NetworkResponse resp = new NetworkResponse();
+//		resp.setBody(result);
+//		exchange.getOut().setBody(resp);
+//	}
 
 	@Override
 	public void logout(Exchange exchange) {
