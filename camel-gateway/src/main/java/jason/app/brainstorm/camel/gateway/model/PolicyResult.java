@@ -5,14 +5,10 @@ public class PolicyResult {
 	private int status;
 	private boolean encryption;
 	private boolean proxyMode;
-	private String route;
+	private String module;
+	private String url;
 	private String errorMessage;
-	public String getRoute() {
-		return route;
-	}
-	public void setRoute(String route) {
-		this.route = route;
-	}
+
 	public boolean isEncryption() {
 		return encryption;
 	}
@@ -36,6 +32,18 @@ public class PolicyResult {
 	}
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	public String getModule() {
+		return module;
+	}
+	public void setModule(String module) {
+		this.module = module;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	

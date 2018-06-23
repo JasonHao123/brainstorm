@@ -14,6 +14,7 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.stereotype.Component;
 
 import jason.app.brainstorm.camel.gateway.model.Application;
+import jason.app.brainstorm.camel.gateway.model.PolicyResult;
 import jason.app.brainstorm.camel.gateway.service.ApplicationIdentificationService;
 import jason.app.brainstorm.camel.gateway.service.PolicyService;
 
@@ -34,7 +35,9 @@ public class PolicyBasedAccessManager implements AccessDecisionManager {
 		Application app = identificationService.identifyApp(request);
 		if(app==null) throw new AccessDeniedException("Invalid request!");
 		request.setAttribute("app", app);
-		policyService.decide(authentication,request,app,invoke.getRequestUrl());
+		PolicyResult policy = policyService.decide(authentication,request,app,invoke.getRequestUrl());
+		if(policy==null) throw new AccessDeniedException("Invalid request!");
+		request.setAttribute("policy", policy);
 	}
 
 	@Override

@@ -9,7 +9,8 @@
 			result.setStatus(0);
 			result.setEncryption(false);
 			result.setProxyMode(false);
-			result.setRoute("service-call:security-service/camel/login");
+			result.setModule("rest-service");
+			result.setUrl(url);
 			return result;
 		}
 	]]>	

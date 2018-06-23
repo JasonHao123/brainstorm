@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	// @formatter:off
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().authenticated().accessDecisionManager(accessDecisionManager);
+		http.csrf().disable().authorizeRequests().anyRequest().authenticated().accessDecisionManager(accessDecisionManager);
 
 	}
 	// @formatter:on

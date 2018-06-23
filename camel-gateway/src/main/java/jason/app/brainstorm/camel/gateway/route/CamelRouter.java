@@ -29,7 +29,7 @@ import jason.app.brainstorm.camel.gateway.model.User;
  * A simple Camel REST DSL route with Swagger API documentation.
  * 
  */
-@Component
+//@Component
 public class CamelRouter extends RouteBuilder {
 
     @Override

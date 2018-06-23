@@ -2,10 +2,13 @@ package jason.app.brainstorm.camel.gateway.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Header;
+import org.apache.camel.http.common.HttpMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -49,7 +52,7 @@ public class PolicyServiceImpl implements PolicyService {
 		return scripts;
 	}
 
-	public void decide(Authentication authentication, HttpServletRequest request, Application app, String url) {
+	public PolicyResult decide(Authentication authentication, HttpServletRequest request, Application app, String url) {
 		for (Script script : getPolicyScripts(POLICY_PREFIX+app.getName() + "-" + app.getVersion() + "-" + app.getCountry())) {
 			// null not support
 			// OK: OK
@@ -58,7 +61,7 @@ public class PolicyServiceImpl implements PolicyService {
 					new Object[] { authentication, request, app, url });
 			switch (result.getStatus()) {
 			case 0:
-				return;
+				return result;
 			case 1:
 				throw new AccessDeniedException(result.getErrorMessage());
 
@@ -73,7 +76,7 @@ public class PolicyServiceImpl implements PolicyService {
 					new Object[] { authentication, request, app, url });
 			switch (result.getStatus()) {
 			case 0:
-				return;
+				return result;
 			case 1:
 				throw new AccessDeniedException(result.getErrorMessage());
 
@@ -88,11 +91,29 @@ public class PolicyServiceImpl implements PolicyService {
 					new Object[] { authentication, request, app, url });
 			switch (result.getStatus()) {
 			case 0:
-				return;
+				return result;
 			case 1:
 				throw new AccessDeniedException(result.getErrorMessage());
 
 			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setHeaders(Exchange exchange) {
+		// TODO Auto-generated method stub
+		if(exchange.getMessage() instanceof HttpMessage) {
+			HttpMessage msg = (HttpMessage) exchange.getMessage();
+			for(Entry<String,Object> entry:msg.getHeaders().entrySet()) {
+				System.out.println(entry.getKey()+":"+entry.getValue());
+			}
+			PolicyResult policy = (PolicyResult) msg.getRequest().getAttribute("policy");
+			exchange.getIn().setHeader("CamelHttpMethod", exchange.getProperty("method"));
+			exchange.getIn().setHeader("module", policy.getModule());
+			exchange.getIn().setHeader("service", policy.getUrl());
+			
+			
 		}
 	}
 
