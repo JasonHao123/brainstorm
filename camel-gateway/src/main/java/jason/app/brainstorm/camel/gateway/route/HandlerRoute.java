@@ -21,7 +21,7 @@ public class HandlerRoute extends RouteBuilder {
           .when(header("isHttps").isEqualTo(true))
      	 	.serviceCall("${header.module}","https://${header.module}/${header.service}?sslContextParameters=#ssltest")
           .otherwise()
-          	.serviceCall("${header.module}/${header.service}");
+          	.serviceCall("${header.module}/${header.service}").endChoice();
 		 
 	
 	}
