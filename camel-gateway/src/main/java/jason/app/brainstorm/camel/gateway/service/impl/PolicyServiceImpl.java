@@ -109,10 +109,14 @@ public class PolicyServiceImpl implements PolicyService {
 				System.out.println(entry.getKey()+":"+entry.getValue());
 			}
 			PolicyResult policy = (PolicyResult) msg.getRequest().getAttribute("policy");
-			exchange.getIn().setHeader("CamelHttpMethod", exchange.getProperty("method"));
-			exchange.getIn().setHeader("module", policy.getModule());
-			exchange.getIn().setHeader("service", policy.getUrl().substring(1));
-			exchange.getIn().setHeader("isHttps", policy.isHttps());
+			if(policy!=null) {
+				exchange.getIn().setHeader("CamelHttpMethod", exchange.getProperty("method"));
+				exchange.getIn().setHeader("module", policy.getModule());
+				exchange.getIn().setHeader("service", policy.getUrl().substring(1));
+				exchange.getIn().setHeader("isHttps", policy.isHttps());
+			}else {
+				throw new AccessDeniedException("Invalid request!");
+			}
 			
 		}
 	}
