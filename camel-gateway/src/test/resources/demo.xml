@@ -9,8 +9,14 @@
 			result.setStatus(0);
 			result.setEncryption(false);
 			result.setProxyMode(false);
-			result.setModule("rest-service");
-			result.setHttps(true);
+			if(url.startsWith("/rest-service")) {
+                 result.setModule("rest-service");
+                 result.setHttps(true);
+             }else {
+                 result.setModule("cn-customer-service-1.0-sit");
+                 result.setHttps(false);
+            }
+
 			result.setUrl(url);
 			return result;
 		}
