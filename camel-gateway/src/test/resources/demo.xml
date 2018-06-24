@@ -10,6 +10,7 @@
 			result.setEncryption(false);
 			result.setProxyMode(false);
 			result.setModule("rest-service");
+			result.setHttps(true);
 			result.setUrl(url);
 			return result;
 		}
