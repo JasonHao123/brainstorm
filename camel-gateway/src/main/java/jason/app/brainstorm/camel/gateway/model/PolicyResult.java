@@ -8,6 +8,7 @@ public class PolicyResult {
 	private String module;
 	private String url;
 	private String errorMessage;
+	private boolean https;
 
 	public boolean isEncryption() {
 		return encryption;
@@ -44,6 +45,12 @@ public class PolicyResult {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public boolean isHttps() {
+		return https;
+	}
+	public void setHttps(boolean https) {
+		this.https = https;
 	}
 
 	

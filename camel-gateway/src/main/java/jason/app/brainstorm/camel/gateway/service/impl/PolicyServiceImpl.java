@@ -111,8 +111,8 @@ public class PolicyServiceImpl implements PolicyService {
 			PolicyResult policy = (PolicyResult) msg.getRequest().getAttribute("policy");
 			exchange.getIn().setHeader("CamelHttpMethod", exchange.getProperty("method"));
 			exchange.getIn().setHeader("module", policy.getModule());
-			exchange.getIn().setHeader("service", policy.getUrl());
-			
+			exchange.getIn().setHeader("service", policy.getUrl().substring(1));
+			exchange.getIn().setHeader("isHttps", policy.isHttps());
 			
 		}
 	}

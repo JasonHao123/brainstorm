@@ -12,14 +12,18 @@ public class HandlerRoute extends RouteBuilder {
 	@Autowired
 	private PolicyService policyService;
 
-
-    @Override
-    public void configure() throws Exception {
-
+	@Override
+	public void configure() throws Exception {
 		 from("servlet://?matchOnUriPrefix=true").streamCaching().setProperty("method",simple("${header.CamelHttpMethod}"))
-         .removeHeaders("CamelHttp*")
-         .bean(policyService,"setHeaders").serviceCall("${header.module}/${header.service}");
-
-    }
+		 .removeHeaders("CamelHttp*")
+		 .bean(policyService,"setHeaders")
+		  .choice()
+          .when(header("isHttps").isEqualTo(true))
+     	 	.serviceCall("${header.module}","https://${header.module}/${header.service}?sslContextParameters=#ssltest")
+          .otherwise()
+          	.serviceCall("${header.module}/${header.service}");
+		 
+	
+	}
 
 }
