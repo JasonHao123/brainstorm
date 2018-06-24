@@ -9,14 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.http.common.HttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import groovy.lang.GroovyShell;
@@ -24,7 +21,6 @@ import groovy.lang.Script;
 import jason.app.brainstorm.camel.gateway.model.Application;
 import jason.app.brainstorm.camel.gateway.model.PoliciesConfig;
 import jason.app.brainstorm.camel.gateway.model.PolicyResult;
-import jason.app.brainstorm.camel.gateway.service.ApplicationIdentificationService;
 import jason.app.brainstorm.camel.gateway.service.PolicyService;
 
 @Service
