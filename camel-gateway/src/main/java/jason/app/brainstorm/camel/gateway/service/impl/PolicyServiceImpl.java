@@ -29,15 +29,11 @@ import jason.app.brainstorm.camel.gateway.service.PolicyService;
 
 @Service
 public class PolicyServiceImpl implements PolicyService {
-	private static Logger logger = LoggerFactory.getLogger(PolicyServiceImpl.class);
 
 	@Autowired
 	private RedisTemplate<String, List<String>> redisTemplate;
 	
 	private static final String POLICY_PREFIX = "policy:";
-	
-	@Autowired
-	private ApplicationIdentificationService identificationService;
 
 	public void loadConfig(@Header("CamelFileName") String key, PoliciesConfig config) {
 		key = key.substring(0, key.length() - 4);
@@ -118,14 +114,6 @@ public class PolicyServiceImpl implements PolicyService {
 				System.out.println(entry.getKey()+":"+entry.getValue());
 			}
 			PolicyResult policy = (PolicyResult) msg.getRequest().getAttribute("policy");
-			if(policy==null) {
-
-				Application app = identificationService.identifyApp(msg.getRequest());
-				if(app==null) throw new AccessDeniedException("Invalid request!");
-				logger.info("detected app "+app);
-				policy = this.decide(SecurityContextHolder.getContext().getAuthentication(),msg.getRequest(),app,msg.getRequest().getRequestURI());
-
-			}
 			if(policy!=null) {
 				exchange.getIn().setHeader("CamelHttpMethod", exchange.getProperty("method"));
 				exchange.getIn().setHeader("module", policy.getModule());
