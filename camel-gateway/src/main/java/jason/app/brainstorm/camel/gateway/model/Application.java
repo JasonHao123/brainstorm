@@ -10,18 +10,25 @@ public class Application {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
+
 	public String getVersion() {
 		return version;
 	}
+
 	public void setVersion(String version) {
 		this.version = version;
-	}	
+	}
 
-	
+	@Override
+	public String toString() {
+		return new StringBuffer().append(name).append("-").append(country).append("-").append(version).toString();
+	}
 }
