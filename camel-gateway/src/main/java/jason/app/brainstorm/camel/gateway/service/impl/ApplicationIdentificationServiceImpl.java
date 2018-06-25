@@ -2,6 +2,7 @@ package jason.app.brainstorm.camel.gateway.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +28,7 @@ public class ApplicationIdentificationServiceImpl implements ApplicationIdentifi
 		for(String str:config.getApp()) {
 			System.out.println(str);
 		}
+		redisTemplate.expire("apps", -1, TimeUnit.SECONDS);
 		redisTemplate.opsForValue().set("apps", config.getApp());
 	}
 	

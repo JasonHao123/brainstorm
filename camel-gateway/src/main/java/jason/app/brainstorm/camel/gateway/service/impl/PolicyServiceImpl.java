@@ -3,6 +3,7 @@ package jason.app.brainstorm.camel.gateway.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +39,8 @@ public class PolicyServiceImpl implements PolicyService {
 		for (String str : config.getPolicy()) {
 			System.out.println(str);
 		}
-		redisTemplate.opsForValue().set(key, config.getPolicy());
+		redisTemplate.expire(key, -1, TimeUnit.SECONDS);
+		redisTemplate.opsForValue().set(key, config.getPolicy()); 
 	}
 
 	@Cacheable
