@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -23,6 +25,8 @@ import jason.app.brainstorm.security.service.impl.CustomUserDetailsService;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Configuration
+@EnableAutoConfiguration
+@EntityScan(basePackages = "jason.app.brainstorm.security.entity")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Bean
@@ -53,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(customUserDetailsService()).passwordEncoder(passwordEncoder());
 	}
 
 }

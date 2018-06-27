@@ -16,6 +16,8 @@
  */
 package jason.app.brainstorm.party.service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,35 +37,41 @@ import org.springframework.stereotype.Service;
 
 import jason.app.brainstorm.party.model.LoginResult;
 import jason.app.brainstorm.party.model.User;
+import jason.app.brainstorm.party.model.request.LoginRequest;
+import jason.app.brainstorm.party.model.response.LoginResponse;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+	private final Map<Integer, User> users = new TreeMap<Integer, User>();
 
-    private final Map<Integer, User> users = new TreeMap<Integer, User>();
+	public UserServiceImpl() {
+		try {
+			users.put(1, new User(1, "John Coltrane" + InetAddress.getLocalHost().getHostName()));
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		users.put(2, new User(2, "Miles Davis"));
+		users.put(3, new User(3, "Sonny Rollins"));
+	}
 
-    public UserServiceImpl() {
-        users.put(1, new User(1, "John Coltrane"));
-        users.put(2, new User(2, "Miles Davis"));
-        users.put(3, new User(3, "Sonny Rollins"));
-    }
+	@Override
+	public User findUser(Integer id) {
+		return users.get(id);
+	}
 
-    @Override
-    public User findUser(Integer id) {
-        return users.get(id);
-    }
+	@Override
+	public Collection<User> findUsers() {
+		return users.values();
+	}
 
-    @Override
-    public Collection<User> findUsers() {
-        return users.values();
-    }
-
-    @Override
-    public void updateUser(User user) {
-        users.put(user.getId(), user);
-    }
+	@Override
+	public void updateUser(User user) {
+		users.put(user.getId(), user);
+	}
 
 	@Override
 	public void test(Exchange exchange) {
@@ -71,44 +79,50 @@ public class UserServiceImpl implements UserService {
 		if (exchange.getIn() instanceof HttpMessage) {
 			HttpServletRequest request = ((HttpMessage) exchange.getIn()).getRequest();
 			HttpSession session = request.getSession(true);
-			
+
 			session.setAttribute("hello", "world");
 		}
 	}
 
 	@Override
-	public void login(Exchange exchange) {
-		LoginResult result = new LoginResult();
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("user", "password");
-		Authentication auth = authenticationManager.authenticate(token);
-		result.setStatus(auth.isAuthenticated()?1:0);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		exchange.getOut().setBody(result);
+	public LoginResponse login(LoginRequest request) {
+		LoginResponse response = new LoginResponse();
+		try {
+			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+			Authentication auth = authenticationManager.authenticate(token);
+			response.setStatus(auth.isAuthenticated() ? 0 : -1);
+			SecurityContextHolder.getContext().setAuthentication(auth);
+		} catch (Exception e) {
+			response.setStatus(-1);
+			response.setMessage(e.getMessage());
+		}
+		return response;
 	}
 
-//	@Override
-//	public void initLogin(Exchange exchange) {
-//		HttpMessage message = (HttpMessage) exchange.getIn();
-////		CsrfToken token = csrfTokenRepository.generateToken(message.getRequest());
-//		HttpSession session = message.getRequest().getSession(true);
-////		session.setAttribute("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN", token);
-//		InitLoginResult result = new InitLoginResult();
-////		result.setCsrfToken(token.getToken());
-//		result.setSessionId(session.getId());
-//		NetworkResponse resp = new NetworkResponse();
-//		resp.setBody(result);
-//		exchange.getOut().setBody(resp);
-//	}
+	// @Override
+	// public void initLogin(Exchange exchange) {
+	// HttpMessage message = (HttpMessage) exchange.getIn();
+	//// CsrfToken token = csrfTokenRepository.generateToken(message.getRequest());
+	// HttpSession session = message.getRequest().getSession(true);
+	//// session.setAttribute("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN",
+	// token);
+	// InitLoginResult result = new InitLoginResult();
+	//// result.setCsrfToken(token.getToken());
+	// result.setSessionId(session.getId());
+	// NetworkResponse resp = new NetworkResponse();
+	// resp.setBody(result);
+	// exchange.getOut().setBody(resp);
+	// }
 
 	@Override
 	public void logout(Exchange exchange) {
 		// TODO Auto-generated method stub
 		HttpMessage message = (HttpMessage) exchange.getMessage();
-		 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-         if (auth != null){    
-            new SecurityContextLogoutHandler().logout(message.getRequest(), message.getResponse(), auth);
-         }
-         SecurityContextHolder.getContext().setAuthentication(null);
-         exchange.getOut().setBody("logout success!");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(message.getRequest(), message.getResponse(), auth);
+		}
+		SecurityContextHolder.getContext().setAuthentication(null);
+		exchange.getOut().setBody("logout success!");
 	}
 }

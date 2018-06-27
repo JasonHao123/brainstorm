@@ -14,34 +14,27 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="USERS")
+@Table(name="USER_LOGIN")
 public class User {
 	
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-    @Column(unique=true)
-    private String username;
+    @Column(name="USER_LOGIN_ID")
+	private String username;
     
-    @Column
+    @Column(name="CURRENT_PASSWORD")
     private String password;
     
-    @Column
-    private boolean enabled;
+    @Column(name="ENABLED")
+    private String enabled;
+    
+    @Column(name="PARTY_ID")
+    private String partyId;
     
     @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="USER_ROLES",joinColumns = {@JoinColumn(name = "USER_ID")}, 
-            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
+    @JoinTable(name="PARTY_ROLE",joinColumns = {@JoinColumn(name = "PARTY_ID")}, 
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_TYPE_ID")})
     private List<Role> roles;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -59,14 +52,6 @@ public class User {
         this.password = password;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public List<Role> getRoles() {
         return roles;
     }
@@ -74,4 +59,22 @@ public class User {
     public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
+
+	public String getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(String enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getPartyId() {
+		return partyId;
+	}
+
+	public void setPartyId(String partyId) {
+		this.partyId = partyId;
+	}
+    
+    
 }

@@ -19,9 +19,25 @@ public class HandlerRoute extends RouteBuilder {
 		 .bean(policyService,"setHeaders")
 		  .choice()
           .when(header("isHttps").isEqualTo(true))
-     	 	.serviceCall("${header.module}","https://${header.module}/${header.service}?sslContextParameters=#ssltest")
+	          .hystrix().hystrixConfiguration()
+	          .executionTimeoutInMilliseconds(5000).circuitBreakerSleepWindowInMilliseconds(10000)
+			  .end()
+		     	 	.serviceCall("${header.module}","https://${header.module}/${header.service}?sslContextParameters=#ssltest")
+		     	 	 
+			 .onFallback()
+			     .transform().constant("Failed to routing the request!")
+			 .endHystrix()
+		 .endChoice()
           .otherwise()
-          	.serviceCall("${header.module}/${header.service}").endChoice();
+	          .hystrix().hystrixConfiguration()
+	          .executionTimeoutInMilliseconds(5000).circuitBreakerSleepWindowInMilliseconds(10000)
+			  .end()
+			  .serviceCall("${header.module}/${header.service}")
+			 .onFallback()
+			     .transform().constant("Failed to routing the request!")
+			 .endHystrix()
+          	
+          .endChoice();
 		 
 	
 	}

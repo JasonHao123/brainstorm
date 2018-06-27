@@ -20,10 +20,10 @@ import java.util.Collection;
 
 import org.apache.camel.Exchange;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import jason.app.brainstorm.party.model.LoginResult;
 import jason.app.brainstorm.party.model.User;
+import jason.app.brainstorm.party.model.request.LoginRequest;
+import jason.app.brainstorm.party.model.response.LoginResponse;
 
 /**
  * Service interface for managing users.
@@ -58,10 +58,11 @@ public interface UserService {
     
     void test(Exchange exchange);
     
-    void login(Exchange exchange);
+    LoginResponse login(LoginRequest exchange);
     
 //    void initLogin(Exchange exchange);
 //    
     void logout(Exchange exchange);
+    
 
 }

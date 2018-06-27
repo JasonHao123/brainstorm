@@ -3,7 +3,10 @@ package jason.app.brainstorm.security.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -41,13 +44,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 			
 			return new User(
 					domainUser.getUsername(), 
-					domainUser.getPassword(),
-					domainUser.isEnabled(),
+					domainUser.getPassword().replace("{SHA}", ""),
+					!"N".equalsIgnoreCase(domainUser.getEnabled()),
 					accountNonExpired,
 					credentialsNonExpired,
 					accountNonLocked,
 					getGrantedAuthorities(domainUser.getRoles()));
-			
+		}catch(NoResultException|EmptyResultDataAccessException  e) {
+			throw new UsernameNotFoundException("user not found!");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

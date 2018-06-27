@@ -1,4 +1,4 @@
-package jason.app.brainstorm.party.config;
+package jason.app.brainstorm.party.route;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.builder.RouteBuilder;

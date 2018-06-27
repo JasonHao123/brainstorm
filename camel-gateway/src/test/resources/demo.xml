@@ -13,7 +13,7 @@
                  result.setModule("rest-service");
                  result.setHttps(true);
              }else {
-                 result.setModule("cn-customer-service-1.0-sit");
+                 result.setModule("ofbiz-party-1.0");
                  result.setHttps(false);
             }
 
