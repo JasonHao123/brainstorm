@@ -82,12 +82,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
 	    return new BasicLookupStrategy(dataSource, aclCache(), aclAuthorizationStrategy(), new ConsoleAuditLogger());
 	}
 
-//	@Bean
-//	public JdbcMutableAclService aclService() {
-//	    JdbcMutableAclService service = new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
-//	    return service;
-//	}
-
 	@Bean
 	public DefaultMethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler() {
 	    return new DefaultMethodSecurityExpressionHandler();
