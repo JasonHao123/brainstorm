@@ -10,22 +10,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jason.app.brainstorm.security.dao.UserDao;
 import jason.app.brainstorm.security.entity.Role;
-import jason.app.brainstorm.security.repository.UserRepository;
 
 /**
  * A custom {@link UserDetailsService} where user information
  * is retrieved from a JPA repository
  */
-@Service("customUserDetailsService")
 @Transactional(readOnly = true)
 public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserDao userDao;
 
 	/**
 	 * Returns a populated {@link UserDetails} object. 
@@ -34,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
-			jason.app.brainstorm.security.entity.User domainUser = userRepository.findByUsername(username);
+			jason.app.brainstorm.security.entity.User domainUser = userDao.findByUsername(username);
 			if(domainUser==null) throw new UsernameNotFoundException("user not found!");
 			boolean enabled = true;
 			boolean accountNonExpired = true;
@@ -65,7 +63,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public static List<GrantedAuthority> getGrantedAuthorities(List<Role> roles) {
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		for (Role role : roles) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
+			authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getId()));
 		}
 		return authorities;
 	}

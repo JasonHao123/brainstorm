@@ -35,7 +35,6 @@ import jason.app.brainstorm.security.entity.AclEntry;
 import jason.app.brainstorm.security.entity.AclObjectIdentity;
 import jason.app.brainstorm.security.entity.AclSid;
 
-@Service("aclService")
 public class JpaMutableAclService implements MutableAclService {
     private boolean foreignKeysInDatabase = true;
     

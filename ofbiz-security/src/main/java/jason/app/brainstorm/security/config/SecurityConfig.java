@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import jason.app.brainstorm.security.service.impl.CustomUserDetailsService;
 
@@ -24,8 +25,10 @@ import jason.app.brainstorm.security.service.impl.CustomUserDetailsService;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
+	@Bean
+	public UserDetailsService customUserDetailsService() {
+		return new CustomUserDetailsService();
+	}
 
 	@Bean
 	public AffirmativeBased accessDecisionManager() {
@@ -40,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().anonymous().principal("guest").authorities("ROLE_GUEST")
-		.and().authorizeRequests().anyRequest().authenticated();
+		.and().authorizeRequests().anyRequest().permitAll();
 	}
 	
 	@Bean
@@ -50,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
 	}
 
 }

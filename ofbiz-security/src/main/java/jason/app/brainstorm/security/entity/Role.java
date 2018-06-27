@@ -5,31 +5,47 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ROLE")
+@Table(name="ROLE_TYPE")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name="ROLE_TYPE_ID")
+    private String id;
     
-    @Column(unique=true)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name="PARENT_TYPE_ID",referencedColumnName="ROLE_TYPE_ID")
+    private Role parent;
+    
+    @Column
+    private String description;
 
-    public Long getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Role getParent() {
+		return parent;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setParent(Role parent) {
+		this.parent = parent;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+    
 }

@@ -17,6 +17,7 @@
 package jason.app.brainstorm.camel.gateway;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.apache.camel.zipkin.starter.CamelZipkin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -25,6 +26,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 @SpringBootApplication
+@CamelZipkin
 public class GatewayApplication {
 
     /**

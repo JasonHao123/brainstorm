@@ -24,14 +24,32 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import jason.app.brainstorm.security.dao.AclDao;
+import jason.app.brainstorm.security.dao.UserDao;
+import jason.app.brainstorm.security.dao.impl.AclDaoJpa;
+import jason.app.brainstorm.security.dao.impl.UserDaoJpa;
+import jason.app.brainstorm.security.service.impl.JpaMutableAclService;
+
 @EnableWebMvc
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter{
 	@Autowired
-	DataSource dataSource;
+	private DataSource dataSource;
 	
-	@Autowired
-	private MutableAclService aclService;
+	@Bean
+	public AclDao aclDao() {
+		return new AclDaoJpa();
+	}
+	
+	@Bean
+	public UserDao userDao() {
+		return new UserDaoJpa();
+	}
+	@Bean
+	public MutableAclService aclService() {
+		JpaMutableAclService aclService = new JpaMutableAclService();
+		return aclService;
+	}
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -41,8 +59,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
 	@Bean
 	public MethodSecurityExpressionHandler createExpressionHandler() {
 	    DefaultMethodSecurityExpressionHandler expressionHandler = defaultMethodSecurityExpressionHandler();
-	    expressionHandler.setPermissionEvaluator(new AclPermissionEvaluator(aclService));
-	    expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService));
+	    expressionHandler.setPermissionEvaluator(new AclPermissionEvaluator(aclService()));
+	    expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService()));
 	    return expressionHandler;
 	}
 	
