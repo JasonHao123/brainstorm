@@ -46,11 +46,8 @@
 	</dependencyManagement>
 
 	<modules>
-		<module>network-operator</module>
-		<module>customer-service</module>
-    <module>network-api</module>
-    <module>camel-gateway</module>
-    <module>security-service</module>
-  	<module>spring-boot-ofbiz</module>
+	    <module>camel-gateway</module>
+	    <module>ofbiz-security</module>
+	    <module>ofbiz-party</module>
   </modules>
 </project>
