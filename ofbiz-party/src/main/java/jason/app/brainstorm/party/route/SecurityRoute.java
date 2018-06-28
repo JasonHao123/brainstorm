@@ -16,7 +16,7 @@ public class SecurityRoute extends RouteBuilder {
          .consumes("application/json")
          .produces("application/json")
      
-         .post("/security/login").description("Find user by ID")
+         .post("/login").description("Find user by ID")
          	 .type(LoginRequest.class)
              .outType(User.class)
              .param().name("id").type(RestParamType.path).description("The ID of the user").dataType("integer").endParam()

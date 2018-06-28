@@ -2,6 +2,7 @@
 	<policy>
 		<![CDATA[
 		import jason.app.brainstorm.camel.gateway.model.PolicyResult;
+		import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 		def evalute(def auth,def request,def app,def url) { 
 			println "Hello, world!" 
 			println request;
@@ -9,7 +10,14 @@
 			result.setStatus(0);
 			result.setEncryption(false);
 			result.setProxyMode(false);
-			if(url.startsWith("/rest-service")) {
+			SecurityContextHolderAwareRequestWrapper wrapper = new SecurityContextHolderAwareRequestWrapper(request,"ROLE_");
+			if(url.startsWith("/users")) {
+				if(!wrapper.isUserInRole("CONTACT")) {
+					result.setStatus(1);
+				}
+				result.setModule("ofbiz-party-1.0");
+                 result.setHttps(false);
+			}else if(url.startsWith("/rest-service")) {
                  result.setModule("rest-service");
                  result.setHttps(true);
              }else {

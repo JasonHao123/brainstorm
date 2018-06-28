@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jason.app.brainstorm.security.dao.UserDao;
 import jason.app.brainstorm.security.entity.Role;
+import jason.app.brainstorm.security.model.OfbizUser;
 
 /**
  * A custom {@link UserDetailsService} where user information
@@ -42,9 +43,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 			boolean credentialsNonExpired = true;
 			boolean accountNonLocked = true;
 			
-			return new User(
+			return new OfbizUser(
 					domainUser.getUsername(), 
 					domainUser.getPassword().replace("{SHA}", ""),
+					domainUser.getPartyId(),
 					!"N".equalsIgnoreCase(domainUser.getEnabled()),
 					accountNonExpired,
 					credentialsNonExpired,
