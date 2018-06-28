@@ -2,6 +2,7 @@ package jason.app.brainstorm.product.config;
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableRedisHttpSession
 @Configuration
 @ConfigurationProperties("redis")
+@EntityScan(basePackages="jason.app.brainstorm.product.entity")
 public class HttpSessionConfig {
 	private String host;
 

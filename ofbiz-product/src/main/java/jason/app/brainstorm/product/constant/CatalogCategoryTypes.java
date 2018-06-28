@@ -1,0 +1,17 @@
+package jason.app.brainstorm.product.constant;
+
+public interface CatalogCategoryTypes {
+	String PCCT_ADMIN_ALLW = "PCCT_ADMIN_ALLW";
+	String	PCCT_BEST_SELL = "PCCT_BEST_SELL";
+	String	PCCT_BROWSE_ROOT = "PCCT_BROWSE_ROOT";
+	String	PCCT_EBAY_ROOT = "PCCT_EBAY_ROOT";
+	String	PCCT_MOST_POPULAR = "PCCT_MOST_POPULAR";
+	String	PCCT_OTHER_SEARCH = "PCCT_OTHER_SEARCH";
+	String	PCCT_PROMOTIONS = "PCCT_PROMOTIONS";
+	String	PCCT_PURCH_ALLW = "PCCT_PURCH_ALLW";
+	String	PCCT_QUICK_ADD = "PCCT_QUICK_ADD";
+	String	PCCT_SEARCH = "PCCT_SEARCH";
+	String	PCCT_VIEW_ALLW = "PCCT_VIEW_ALLW";
+	String	PCCT_WHATS_NEW = "PCCT_WHATS_NEW";
+ 
+}
