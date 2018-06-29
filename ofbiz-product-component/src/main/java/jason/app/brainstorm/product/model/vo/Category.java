@@ -1,28 +1,22 @@
-package jason.app.brainstorm.product.entity;
+package jason.app.brainstorm.product.model.vo;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
-@Entity
-@Table(name="PRODUCT_CATEGORY")
 public class Category {
 
-	@Id
-	@Column(name="PRODUCT_CATEGORY_ID")
 	private String id;
-	
-	@Column(name="PRODUCT_CATEGORY_TYPE_ID")
+
 	private String type;
-	
-	@Column(name="CATEGORY_NAME")
+
 	private String name;
-	
-	@Column(name="DESCRIPTION")
+
 	private String description;
+	
+	private String imageUrl;
+
+	private String linkImage1;
+
+	private String linkImage2;
 
 	public String getId() {
 		return id;
@@ -56,4 +50,29 @@ public class Category {
 		this.description = description;
 	}
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getLinkImage1() {
+		return linkImage1;
+	}
+
+	public void setLinkImage1(String linkImage1) {
+		this.linkImage1 = linkImage1;
+	}
+
+	public String getLinkImage2() {
+		return linkImage2;
+	}
+
+	public void setLinkImage2(String linkImage2) {
+		this.linkImage2 = linkImage2;
+	}
+	
+	
 }

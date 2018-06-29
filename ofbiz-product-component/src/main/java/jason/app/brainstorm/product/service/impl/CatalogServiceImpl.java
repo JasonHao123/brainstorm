@@ -97,28 +97,33 @@ public class CatalogServiceImpl implements CatalogService {
 		ProductResponse response = new ProductResponse();
 		CatalogCategory root = catalogRepo.findFirstByCatalogIdAndType("WEBSTORE_CATALOG",type);
 		if(root!=null) {
-			List<CategoryRollup> list = categoryRepo.findByParentCategory(root.getCategory());
-			List<Category> categories = extractCategoryTree(list);
-			Category rootCate = new Category();
-			rootCate.setId(root.getCategory());
-			categories.add(rootCate);
-			List<ProductCategory> pc = productRepo.findByCategoryInAndProduct_TypeIn(categories, new String[] {ProductTypes.AGGREGATED,ProductTypes.DIGITAL_GOOD,ProductTypes.MARKETING_PKG,ProductTypes.FINISHED_GOOD,ProductTypes.SERVICE_PRODUCT});
-			List<Product> products = new ArrayList<Product>();
-			for(ProductCategory prod:pc) {
-				Product product = new Product();
-				BeanUtils.copyProperties(prod.getProduct(), product);
-				ProductContent content = prodContentRepo.findFirstByProductIdAndType(product.getId(),ProductContentTypes.IMAGE);
-				if(content!=null) {
-					product.setImage(content.getContent().getResource().getInfo());
-				}
-				products.add(product);
-			}
+			List<Product> products = getProductsByCategory(root.getCategory());
 			response.setProducts(products);
 		}else {
 			response.setStatus(-1);
 			response.setMessage("No category found");
 		}
 		return response;
+	}
+
+	private List<Product> getProductsByCategory(String category) {
+		List<CategoryRollup> list = categoryRepo.findByParentCategory(category);
+		List<Category> categories = extractCategoryTree(list);
+		Category rootCate = new Category();
+		rootCate.setId(category);
+		categories.add(rootCate);
+		List<ProductCategory> pc = productRepo.findByCategoryInAndProduct_TypeIn(categories, new String[] {ProductTypes.AGGREGATED,ProductTypes.DIGITAL_GOOD,ProductTypes.MARKETING_PKG,ProductTypes.FINISHED_GOOD,ProductTypes.SERVICE_PRODUCT});
+		List<Product> products = new ArrayList<Product>();
+		for(ProductCategory prod:pc) {
+			Product product = new Product();
+			BeanUtils.copyProperties(prod.getProduct(), product);
+			ProductContent content = prodContentRepo.findFirstByProductIdAndType(product.getId(),ProductContentTypes.IMAGE);
+			if(content!=null) {
+				product.setImage(content.getContent().getResource().getInfo());
+			}
+			products.add(product);
+		}
+		return products;
 	}
 	
 	
@@ -132,5 +137,40 @@ public class CatalogServiceImpl implements CatalogService {
 			result.add(category.getCategory());
 		}
 		return result;
+	}
+
+	@Override
+	public CatalogResponse getCategory(String id) {
+		CatalogResponse response = new CatalogResponse();
+		
+		if(id!=null) {
+			List<CategoryRollup> list = categoryRepo.findByParentCategory(id);
+			if(list!=null) {
+				List<jason.app.brainstorm.product.model.vo.Category> categories = new ArrayList<jason.app.brainstorm.product.model.vo.Category>();
+				for(CategoryRollup category:list) {
+					jason.app.brainstorm.product.model.vo.Category target = new jason.app.brainstorm.product.model.vo.Category();
+					BeanUtils.copyProperties(category.getCategory(), target);
+					if(target.getName()==null) {
+						CategoryContent name = cataContentRepo.findFirstByCategoryIdAndType(target.getId(), CategoryContentTypes.CATEGORY_NAME);
+						if(name!=null) {
+							target.setName(textRepo.findOne(name.getContent().getResource().getId()).getText());
+						}
+					}
+					categories.add(target);
+				}
+				response.setCategories(categories);
+			}
+		}else {
+			response.setStatus(-1);
+			response.setMessage("No category found");
+		}
+		return response;
+	}
+
+	@Override
+	public ProductResponse getCategoryProducts(String id) {
+		ProductResponse response = new ProductResponse();
+		response.setProducts(getProductsByCategory(id));
+		return response;
 	}
 }

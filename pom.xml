@@ -8,8 +8,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.target>1.6</maven.compiler.target>
-		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.boot-version>1.5.10.RELEASE</spring.boot-version>
 		<spring.version>4.3.14.RELEASE</spring.version>
@@ -49,5 +49,6 @@
 	    <module>camel-gateway</module>
 	    <module>ofbiz-security</module>
 	    <module>ofbiz-party</module>
+    		<module>ofbiz-product-component</module>
   </modules>
 </project>

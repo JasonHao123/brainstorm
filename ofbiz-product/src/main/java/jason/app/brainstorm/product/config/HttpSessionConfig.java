@@ -15,7 +15,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableRedisHttpSession
 @Configuration
 @ConfigurationProperties("redis")
-@EntityScan(basePackages="jason.app.brainstorm.product.entity")
 public class HttpSessionConfig {
 	private String host;
 

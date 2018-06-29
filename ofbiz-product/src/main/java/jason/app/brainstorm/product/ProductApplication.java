@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
+import jason.app.brainstorm.product.config.OfbizProductConfig;
 import jason.app.brainstorm.security.config.SecurityConfig;
 import jason.app.brainstorm.security.config.WebMvcConfig;
 
@@ -18,7 +19,8 @@ import jason.app.brainstorm.security.config.WebMvcConfig;
 @CamelZipkin
 @Import({
 	SecurityConfig.class,
-	WebMvcConfig.class
+	WebMvcConfig.class,
+	OfbizProductConfig.class
 })
 public class ProductApplication {
 
