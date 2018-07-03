@@ -59,7 +59,7 @@ public class OfbizProductComponentTest extends CamelSpringTestSupport {
     public void testOfbizProduct() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);       
-        mock.expectedBodiesReceived("{\"status\":0,\"categories\":[]}");
+        mock.expectedBodiesReceived("[]");
         assertMockEndpointsSatisfied();
     }
 

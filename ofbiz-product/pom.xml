@@ -133,7 +133,13 @@
 		<dependency>
 			<groupId>jason.app.brainstorm</groupId>
 			<artifactId>ofbiz-product-component</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.zipkin.reporter2</groupId>
+			<artifactId>zipkin-sender-okhttp3</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 	</dependencies>
 
@@ -153,6 +159,15 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<!-- allows to fail if not all routes are fully covered during testing -->
+				<!-- <configuration> <failOnError>true</failOnError> </configuration> -->
 			</plugin>
 			<!-- Docker maven plugin -->
 			<plugin>

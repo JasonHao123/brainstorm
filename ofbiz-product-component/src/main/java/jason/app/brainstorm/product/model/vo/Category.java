@@ -1,7 +1,9 @@
 package jason.app.brainstorm.product.model.vo;
 
-import javax.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_NULL)
 public class Category {
 
 	private String id;

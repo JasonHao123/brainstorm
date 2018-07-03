@@ -17,6 +17,7 @@
 package jason.app.brainstorm.product.component;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,26 +44,30 @@ public class OfbizProductProducer extends DefaultProducer {
         if(service==null) {
         		exchange.getIn().setBody("service not found "+remaining);
         }else {
+			String id = (String) exchange.getIn().getHeader("id");
+			String pageNo = null;
+			if(exchange.getIn() instanceof HttpMessage) {
+				pageNo = ((HttpMessage)exchange.getIn()).getRequest().getParameter("pageNo");
+			}
         		switch(remaining) {
 	        		case "getCatalog":
 	        			exchange.getIn().setBody(service.getCatalog());
 	        			break;
 	        		case "getCategory":
-	        			String id = (String) exchange.getIn().getHeader("id");
+	        			
 	        			exchange.getIn().setBody(service.getCategory(id));
 	        			break;
 	        		case "getCategoryProducts":
-	        			String id1 = (String) exchange.getIn().getHeader("id");
-	        			exchange.getIn().setBody(service.getCategoryProducts(id1));
+	        			exchange.getIn().setBody(service.getCategoryProducts(id,pageNo));
 	        			break;
 	        		case "getNews":
-	        			exchange.getIn().setBody(service.getNews());
+	        			exchange.getIn().setBody(service.getNews(pageNo));
 	        			break;
 	        		case "getBestSeller":
-	        			exchange.getIn().setBody(service.getBestSeller());
+	        			exchange.getIn().setBody(service.getBestSeller(pageNo));
 	        			break;
 	        		case "getPromotion":
-	        			exchange.getIn().setBody(service.getPromotion());
+	        			exchange.getIn().setBody(service.getPromotion(pageNo));
 	        			break;
         		}
         }

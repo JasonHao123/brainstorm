@@ -49,6 +49,10 @@
 	    <module>camel-gateway</module>
 	    <module>ofbiz-security</module>
 	    <module>ofbiz-party</module>
+	     <module>ofbiz-product</module>
     		<module>ofbiz-product-component</module>
+    		 <module>ofbiz-order</module>
+    		<module>ofbiz-order-component</module>
+    		
   </modules>
 </project>

@@ -30,6 +30,7 @@ public class ProductRoute extends RouteBuilder {
          .get("/category/{id}").description("Find user by ID")
          .outType(CatalogResponse.class)
          .param().name("id").type(RestParamType.path).description("The ID of the user").dataType("integer").endParam()
+         .param().name("pageNo").type(RestParamType.query).description("The ID of the user").dataType("integer").endParam()
          .to("product://getCategoryProducts")
         // .route().to("bean:catalogService?method=getCategoryProducts(${header.id})").removeHeaders("X-").endRest()
          
@@ -48,6 +49,5 @@ public class ProductRoute extends RouteBuilder {
 		 .to("product://getPromotion");
 		//.route().to("bean:catalogService?method=getPromotion").removeHeaders("X-").endRest();
 		 
-		
 	}
 }

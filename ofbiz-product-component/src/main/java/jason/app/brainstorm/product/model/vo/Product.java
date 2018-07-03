@@ -1,7 +1,5 @@
 package jason.app.brainstorm.product.model.vo;
 
-import javax.persistence.Column;
-
 public class Product {
 	private String id;
 	private String type;
@@ -22,6 +20,11 @@ public class Product {
 	private String mediumImage;
 
 	private String largeImage;
+	
+	private Double listPrice;
+	
+	private Double salesPrice;
+	
 
 	public String getId() {
 		return id;
@@ -101,6 +104,22 @@ public class Product {
 
 	public void setLargeImage(String largeImage) {
 		this.largeImage = largeImage;
+	}
+
+	public Double getListPrice() {
+		return listPrice;
+	}
+
+	public void setListPrice(Double listPrice) {
+		this.listPrice = listPrice;
+	}
+
+	public Double getSalesPrice() {
+		return salesPrice;
+	}
+
+	public void setSalesPrice(Double salesPrice) {
+		this.salesPrice = salesPrice;
 	}
 	
 	
