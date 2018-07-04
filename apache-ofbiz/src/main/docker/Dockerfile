@@ -1,6 +1,6 @@
 from  openjdk:8-jdk
 
-copy apache-ofbiz-16.11.04.java /apache-ofbiz-16.11.04.zip
+copy apache-ofbiz-16.11.04.zip /apache-ofbiz-16.11.04.zip
 run unzip  apache-ofbiz-16.11.04.zip
 run mkdir /apache-ofbiz-16.11.04/framework/entity/lib/
 copy mysql-connector-java-5.1.46.jar /apache-ofbiz-16.11.04/framework/entity/lib/mysql-connector-java-5.1.46.jar

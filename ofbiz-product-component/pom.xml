@@ -91,6 +91,11 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>jason.app.brainstorm</groupId>
+			<artifactId>ofbiz-security</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 </project>

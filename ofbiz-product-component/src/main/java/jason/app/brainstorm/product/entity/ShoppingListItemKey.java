@@ -1,4 +1,4 @@
-package jason.app.brainstorm.order.entity;
+package jason.app.brainstorm.product.entity;
 
 import java.io.Serializable;
 

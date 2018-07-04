@@ -1,9 +1,16 @@
-package jason.app.brainstorm.order.entity;
+package jason.app.brainstorm.product.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Table(name="SHOPPING_LIST")
@@ -32,6 +39,9 @@ public class ShoppingList {
 	
 	@Column(name="CURRENCY_UOM")
 	private String currentCode;
+	
+	@OneToMany(mappedBy="id.list",fetch=FetchType.EAGER)
+	private List<ShoppingListItem> items;
 
 	public String getId() {
 		return id;
@@ -95,6 +105,14 @@ public class ShoppingList {
 
 	public void setCurrentCode(String currentCode) {
 		this.currentCode = currentCode;
+	}
+
+	public List<ShoppingListItem> getItems() {
+		return items;
+	}
+
+	public void setItems(List<ShoppingListItem> items) {
+		this.items = items;
 	}
 	
 	

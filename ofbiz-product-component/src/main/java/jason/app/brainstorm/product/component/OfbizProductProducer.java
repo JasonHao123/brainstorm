@@ -17,10 +17,11 @@
 package jason.app.brainstorm.product.component;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import jason.app.brainstorm.product.service.CatalogService;
 
@@ -45,10 +46,8 @@ public class OfbizProductProducer extends DefaultProducer {
         		exchange.getIn().setBody("service not found "+remaining);
         }else {
 			String id = (String) exchange.getIn().getHeader("id");
-			String pageNo = null;
-			if(exchange.getIn() instanceof HttpMessage) {
-				pageNo = ((HttpMessage)exchange.getIn()).getRequest().getParameter("pageNo");
-			}
+			String pageNo = (String) exchange.getIn().getHeader("pageNo");
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         		switch(remaining) {
 	        		case "getCatalog":
 	        			exchange.getIn().setBody(service.getCatalog());
@@ -68,6 +67,15 @@ public class OfbizProductProducer extends DefaultProducer {
 	        			break;
 	        		case "getPromotion":
 	        			exchange.getIn().setBody(service.getPromotion(pageNo));
+	        			break;
+	        		case "getWishList":
+	        			exchange.getIn().setBody(service.getWishList());
+	        			break;
+	        		case "addWishListItem":
+	        			exchange.getIn().setBody(service.addWishListItem(id));
+	        			break;
+	        		case "deleteWishListItem":
+	        			exchange.getIn().setBody(service.deleteWishListItem(id));
 	        			break;
         		}
         }

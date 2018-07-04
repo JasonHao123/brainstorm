@@ -1,28 +1,24 @@
-package jason.app.brainstorm.order.entity;
+package jason.app.brainstorm.product.entity;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import jason.app.brainstorm.order.model.vo.Product;
 
 @Entity
 @Table(name="SHOPPING_LIST_ITEM")
-@IdClass(ShoppingListItemKey.class)
 public class ShoppingListItem {
 
-	@Id
-	private ShoppingList list;
+	@EmbeddedId
+	private ShoppingListItemKey id;
 	
-	@Id
-	private String seqId;
-
-	@Column(name="PRODUCT_ID")
-	private String productId;
+	@ManyToOne
+	@JoinColumn(name="PRODUCT_ID")
+	private Product product;
 	
 	@Column(name="QUANTITY")
 	private Double quantity;
@@ -30,28 +26,21 @@ public class ShoppingListItem {
 	@Column(name="MODIFIED_PRICE")
 	private Double price;
 
-	public ShoppingList getList() {
-		return list;
+
+	public ShoppingListItemKey getId() {
+		return id;
 	}
 
-	public void setList(ShoppingList list) {
-		this.list = list;
+	public void setId(ShoppingListItemKey id) {
+		this.id = id;
 	}
 
-	public String getSeqId() {
-		return seqId;
+	public Product getProduct() {
+		return product;
 	}
 
-	public void setSeqId(String seqId) {
-		this.seqId = seqId;
-	}
-
-	public String getProductId() {
-		return productId;
-	}
-
-	public void setProductId(String productId) {
-		this.productId = productId;
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
 	public Double getQuantity() {

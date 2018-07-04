@@ -1,4 +1,4 @@
-package jason.app.brainstorm.order.constant;
+package jason.app.brainstorm.product.constant;
 
 public interface ShoppingListTypes {
 	String 	SLT_AUTO_REODR = "SLT_AUTO_REODR";

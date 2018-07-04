@@ -1,5 +1,7 @@
 package jason.app.brainstorm.order.service;
 
-public interface CustomOrderService {
+import org.apache.camel.Exchange;
 
+public interface CustomOrderService {
+	public void setCurrentUserHeader(Exchange exchange);
 }
