@@ -1,33 +1,35 @@
 package jason.app.brainstorm.order.route;
 
+import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
-import jason.app.brainstorm.order.service.CustomOrderService;
+import jason.app.brainstorm.order.model.vo.ShoppingCart;
+import jason.app.brainstorm.order.model.vo.ShoppingItem;
 
-//@Component
+@Component
 public class ShoppingCartRoute extends RouteBuilder {
-
-	@Autowired
-	private CustomOrderService orderService;
 
 	@Override
 	public void configure() throws Exception {
 
-		rest("/shoppingcart").description("User REST service").consumes("application/json").produces("application/json")
+		restConfiguration().component("servlet").bindingMode(RestBindingMode.json)
+				.dataFormatProperty("prettyPrint", "true").apiContextPath("/api-doc").host("192.168.2.1").port(8090)
+				.contextPath("/camel").apiProperty("api.title", "User API").apiProperty("api.version", "1.0.0")
+				.apiProperty("cors", "true");
 
-				.post("/add").description("Find user by ID").to("seda:updateCart").post("/remove")
-				.description("Find user by ID").to("seda:updateCart").get("/clear").description("Find user by ID")
-				.to("seda:clearCart").get("/list").description("Find user by ID").to("seda:updateCart");
+		onException(CamelAuthorizationException.class).handled(true).transform()
+				.simple("Access Denied with the Policy of ${exception.policyId} !");
 
-		from("seda:updateCart").bean(orderService, "setCurrentUserHeader").choice().when()
-				.jsonpath("$.request.product_id", true).setHeader("product_id", jsonpath("$.request.product_id"))
-				.setHeader("quantity", jsonpath("$.request.quantity")).endChoice().to("order://loadShoppingCart")
-				.bean(orderService, "modifyCart").choice().when().header("$header.product_id}")
-				.to("order://saveShoppingCart").endChoice().to("order://calcShoppingCart");
+		rest("/order").description("User REST service").consumes("application/json").produces("application/json")
 
-		from("seda:clearCart").bean(orderService, "setCurrentUserHeader").to("order://clearShoppingCart");
+				.post().description("Find all users").type(ShoppingCart.class).outType(ShoppingCart.class)
+				.responseMessage().code(200).message("All users successfully returned").endResponseMessage()
+				.to("order://placeOrder").
 
+				post("/shoppingcart").description("Find all users").type(ShoppingCart.class).outType(ShoppingCart.class)
+				.responseMessage().code(200).message("All users successfully returned").endResponseMessage()
+				.to("order://calcShoppingcart");
 	}
 }

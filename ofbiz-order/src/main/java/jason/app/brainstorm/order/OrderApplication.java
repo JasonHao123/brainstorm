@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
@@ -21,8 +19,8 @@ import jason.app.brainstorm.security.config.WebMvcConfig;
 @CamelZipkin
 @Import({
 	SecurityConfig.class,
-	WebMvcConfig.class
-	//OfbizOrderConfig.class
+	WebMvcConfig.class,
+	OfbizOrderConfig.class
 })
 public class OrderApplication {
 

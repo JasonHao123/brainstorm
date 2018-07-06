@@ -17,38 +17,44 @@
 package jason.app.brainstorm.order.component;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jason.app.brainstorm.order.model.vo.ShoppingCart;
+import jason.app.brainstorm.order.service.ShoppingCartService;
 
 /**
  * The OfbizProduct producer.
  */
 public class OfbizProductProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OfbizProductProducer.class);
-    private OfbizProductEndpoint endpoint;
+	private static final transient Logger LOG = LoggerFactory.getLogger(OfbizProductProducer.class);
+	private OfbizProductEndpoint endpoint;
 	private String remaining;
 
-    public OfbizProductProducer(OfbizProductEndpoint endpoint, String remaining) {
-        super(endpoint);
-        this.endpoint = endpoint;
-        this.remaining = remaining;
-    }
+	public OfbizProductProducer(OfbizProductEndpoint endpoint, String remaining) {
+		super(endpoint);
+		this.endpoint = endpoint;
+		this.remaining = remaining;
+	}
 
-    public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());   
-     //   CatalogService service = (CatalogService) endpoint.getCamelContext().getRegistry().lookupByNameAndType("catalogService", CatalogService.class);
-//        if(service==null) {
-//        		exchange.getIn().setBody("service not found "+remaining);
-//        }else {
-//			String id = (String) exchange.getIn().getHeader("id");
-//			String pageNo = null;
-//			if(exchange.getIn() instanceof HttpMessage) {
-//				pageNo = ((HttpMessage)exchange.getIn()).getRequest().getParameter("pageNo");
-//			}
-//        		
-//        }
-    }
+	public void process(Exchange exchange) throws Exception {
+		System.out.println(exchange.getIn().getBody());
+		ShoppingCartService service = (ShoppingCartService) endpoint.getCamelContext().getRegistry()
+				.lookupByNameAndType("shoppingCartService", ShoppingCartService.class);
+		if (service == null) {
+			exchange.getIn().setBody("service not found " + remaining);
+		} else {
+			switch (remaining) {
+			case "calcShoppingcart":
+				exchange.getIn().setBody(service.calcShoppingcart((ShoppingCart) exchange.getIn().getBody()));
+				break;
+			case "placeOrder":
+				exchange.getIn().setBody(service.placeOrder((ShoppingCart) exchange.getIn().getBody()));
+				break;
+			}
+
+		}
+	}
 
 }

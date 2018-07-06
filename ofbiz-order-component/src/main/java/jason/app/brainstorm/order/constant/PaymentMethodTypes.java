@@ -1,0 +1,23 @@
+package jason.app.brainstorm.order.constant;
+
+public interface PaymentMethodTypes {
+	String EXT_IDEAL = "EXT_IDEAL";
+	String CASH = "CASH";
+	String CERTIFIED_CHECK = "CERTIFIED_CHECK";
+	String COMPANY_ACCOUNT = "COMPANY_ACCOUNT";
+	String COMPANY_CHECK = "COMPANY_CHECK";
+	String CREDIT_CARD = "CREDIT_CARD";
+	String EFT_ACCOUNT = "EFT_ACCOUNT";
+	String EXT_BILLACT = "EXT_BILLACT";
+	String EXT_COD = "EXT_COD";
+	String EXT_EBAY = "EXT_EBAY";
+	String EXT_OFFLINE = "EXT_OFFLINE";
+	String EXT_PAYPAL = "EXT_PAYPAL";
+	String EXT_WORLDPAY = "EXT_WORLDPAY";
+	String FIN_ACCOUNT = "FIN_ACCOUNT";
+	String GIFT_CARD = "GIFT_CARD";
+	String GIFT_CERTIFICATE = "GIFT_CERTIFICATE";
+	String MONEY_ORDER = "MONEY_ORDER";
+	String PERSONAL_CHECK = "PERSONAL_CHECK";
+
+}
