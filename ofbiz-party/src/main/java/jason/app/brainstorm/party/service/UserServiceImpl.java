@@ -32,10 +32,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
-import jason.app.brainstorm.party.model.LoginResult;
 import jason.app.brainstorm.party.model.User;
 import jason.app.brainstorm.party.model.request.LoginRequest;
 import jason.app.brainstorm.party.model.response.LoginResponse;
@@ -44,6 +44,9 @@ import jason.app.brainstorm.party.model.response.LoginResponse;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private RememberMeServices rememberMeServices;
 
 	private final Map<Integer, User> users = new TreeMap<Integer, User>();
 
@@ -85,13 +88,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public LoginResponse login(LoginRequest request) {
+	public LoginResponse login(Exchange exchange) {
 		LoginResponse response = new LoginResponse();
+		HttpMessage msg = (HttpMessage) exchange.getMessage();
+		LoginRequest request = (LoginRequest) msg.getBody();
 		try {
 			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
 			Authentication auth = authenticationManager.authenticate(token);
 			response.setStatus(auth.isAuthenticated() ? 0 : -1);
 			SecurityContextHolder.getContext().setAuthentication(auth);
+			rememberMeServices.loginSuccess(msg.getRequest(), msg.getResponse(), auth);
 		} catch (Exception e) {
 			response.setStatus(-1);
 			response.setMessage(e.getMessage());
@@ -99,24 +105,9 @@ public class UserServiceImpl implements UserService {
 		return response;
 	}
 
-	// @Override
-	// public void initLogin(Exchange exchange) {
-	// HttpMessage message = (HttpMessage) exchange.getIn();
-	//// CsrfToken token = csrfTokenRepository.generateToken(message.getRequest());
-	// HttpSession session = message.getRequest().getSession(true);
-	//// session.setAttribute("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN",
-	// token);
-	// InitLoginResult result = new InitLoginResult();
-	//// result.setCsrfToken(token.getToken());
-	// result.setSessionId(session.getId());
-	// NetworkResponse resp = new NetworkResponse();
-	// resp.setBody(result);
-	// exchange.getOut().setBody(resp);
-	// }
 
 	@Override
 	public void logout(Exchange exchange) {
-		// TODO Auto-generated method stub
 		HttpMessage message = (HttpMessage) exchange.getMessage();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
