@@ -38,7 +38,7 @@ public interface UserService {
      *            the ID of the user
      * @return the user, or <code>null</code> if user not found.
      */
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("isRememberMe()")
     User findUser(Integer id);
 
     /**
@@ -58,7 +58,7 @@ public interface UserService {
     
     void test(Exchange exchange);
     
-    LoginResponse login(LoginRequest exchange);
+    LoginResponse login(Exchange exchange);
     
 //    void initLogin(Exchange exchange);
 //    

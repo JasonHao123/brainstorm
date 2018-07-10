@@ -11,17 +11,17 @@
 			result.setEncryption(false);
 			result.setProxyMode(false);
 			SecurityContextHolderAwareRequestWrapper wrapper = new SecurityContextHolderAwareRequestWrapper(request,"ROLE_");
-			if(url.startsWith("/users")) {
-				if(!wrapper.isUserInRole("CONTACT")) {
-					result.setStatus(1);
-				}
-				result.setModule("ofbiz-party-1.0");
+			if(url.startsWith("/user/login")) {
+				result.setModule("ofbiz-party");
+			    result.setHttps(false);
+			} else if(url.startsWith("/users")) {
+				result.setModule("ofbiz-party");
                  result.setHttps(false);
 			}else if(url.startsWith("/rest-service")) {
                  result.setModule("rest-service");
                  result.setHttps(true);
              }else {
-                 result.setModule("ofbiz-party-1.0");
+                 result.setModule("ofbiz-party");
                  result.setHttps(false);
             }
 
