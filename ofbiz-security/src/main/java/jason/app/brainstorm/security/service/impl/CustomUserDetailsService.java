@@ -71,6 +71,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		for (Role role : roles) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getId()));
 		}
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 		return authorities;
 	}
 }

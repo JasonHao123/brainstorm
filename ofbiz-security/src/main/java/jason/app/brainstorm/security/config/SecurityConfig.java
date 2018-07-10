@@ -3,6 +3,8 @@ package jason.app.brainstorm.security.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -20,9 +22,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import jason.app.brainstorm.security.service.impl.CustomUserDetailsService;
 
@@ -32,6 +34,9 @@ import jason.app.brainstorm.security.service.impl.CustomUserDetailsService;
 @EnableAutoConfiguration
 @EntityScan(basePackages = "jason.app.brainstorm.security.entity")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Autowired
+	private DataSource dataSource;
 	
 	@Bean
 	public UserDetailsService customUserDetailsService() {
@@ -51,19 +56,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().anonymous().principal("guest").authorities("ROLE_GUEST")
-		.and().authorizeRequests().anyRequest().permitAll().and().rememberMe().key("token").rememberMeServices(rememberMeServices()).tokenRepository(tokenRepository());
+		.and().authorizeRequests().anyRequest().permitAll().and().rememberMe().key("token").rememberMeServices(rememberMeServices());
 	}
 	
 	@Bean
 	public PersistentTokenRepository tokenRepository() {
-		// TODO Auto-generated method stub
-		return new InMemoryTokenRepositoryImpl();
+		JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+		repo.setDataSource(dataSource);
+		return repo;
 	}
 
 	@Bean
 	public RememberMeServices rememberMeServices() {
 		// TODO Auto-generated method stub
-		TokenBasedRememberMeServices rem = new TokenBasedRememberMeServices("token", customUserDetailsService());
+		PersistentTokenBasedRememberMeServices rem = new PersistentTokenBasedRememberMeServices("token", customUserDetailsService(),tokenRepository());
 		rem.setAlwaysRemember(true);
 		return rem;
 	}
